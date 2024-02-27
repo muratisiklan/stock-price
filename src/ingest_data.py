@@ -1,7 +1,8 @@
 from pymongo import MongoClient
 import pandas as pd
 
-def fetch_stock_data_from_mongo(symbol, start, end):
+
+def data_ingestion(symbol, start, end):
     """
     Fetches stock data for a specific stock symbol within a specific time interval from MongoDB.
     Includes Rate values from the 'interest' collection.
@@ -59,7 +60,8 @@ def fetch_stock_data_from_mongo(symbol, start, end):
         cursor_interest = collection_interest.find(query_interest)
 
         # Create a dictionary to store Rate values by date
-        rate_dict = {document["_id"]: document["Rate"] for document in cursor_interest}
+        rate_dict = {document["_id"]: document["Rate"]
+                     for document in cursor_interest}
 
         if data_list:
             # Convert the list of stock data to a DataFrame
@@ -70,5 +72,6 @@ def fetch_stock_data_from_mongo(symbol, start, end):
 
             return df
         else:
-            print(f"No data found for {symbol} in the specified time interval.")
+            print(
+                f"No data found for {symbol} in the specified time interval.")
             return pd.DataFrame()

@@ -5,59 +5,21 @@ from datetime import datetime, timedelta
 import numpy as np
 
 
-def update_stocks_collection():
-    # Constants
-    MONGO_URI = "mongodb://127.0.0.1:27017/"
-    DB_NAME = "stockdata"
-    COLLECTION_NAME = "stocks"
-    bist_data = pd.read_csv(
-        "/Users/muratisiklan/Desktop/stock-price/Artifacts/base_data/bist_data.csv")
+def get_data_from_yfinance(symbol, start_date, end_date):
+    # Includes start, excludes end date
+    start_date = datetime.strptime(start_date, '%Y-%m-%d')
+    end_date = datetime.strptime(end_date, '%Y-%m-%d')
+    try:
+        # Fetch historical stock data for the specified symbol and date range from Yahoo Finance
+        stock_data = yf.download(symbol, start=start_date, end=end_date)
 
-    # Connect to MongoDB
-    with MongoClient(MONGO_URI) as client:
-        db = client[DB_NAME]
-        collection = db[COLLECTION_NAME]
+        # Reset the index and format the '_id' field as a string
+        stock_data.reset_index(inplace=True)
 
-        # Get the most recent date in the database
-        most_recent_entry = collection.find_one({}, sort=[("_id", -1)])
-        most_recent_date = datetime.strptime(
-            most_recent_entry["_id"], "%Y-%m-%d")
-        today = datetime.now().strftime("%Y-%m-%d")
-        if today == most_recent_date:
-            print("Stocks collection is up to date!!!")
-        else:
-
-            # Calculate the date range to fetch data
-
-            date_range_start = (most_recent_date).strftime("%Y-%m-%d")
-            date_range_end = (datetime.now()+timedelta(days=1)
-                              ).strftime("%Y-%m-%d")
-
-            for index, row in bist_data.iterrows():
-                symbol = row['Symbol']
-                company = row['Name']
-
-                # Fetch stock data
-                stock_data = yf.download(
-                    symbol, start=date_range_start, end=date_range_end)
-
-                if not stock_data.empty:
-                    # Organize stock data by date
-                    for date_str, data in stock_data.iterrows():
-                        date_str = date_str.strftime('%Y-%m-%d')
-                        document = {
-                            "Symbol": symbol,
-                            "Company": company,
-                            "Open": data['Open'],
-                            "High": data['High'],
-                            "Low": data['Low'],
-                            "Close": data['Close'],
-                            "AdjClose": data['Adj Close'],
-                            "Volume": data['Volume']
-                        }
-                        # Insert document into MongoDB collection
-                        collection.update_one({"_id": date_str}, {
-                            "$push": {"bist": document}}, upsert=True)
+        return stock_data
+    except Exception as e:
+        print(
+            f"Error fetching data for {symbol} from {start_date} to {end_date}: {e}")
 
 
 def update_interest_collection():
@@ -111,12 +73,3 @@ def update_interest_collection():
 
                 # Insert the document into the collection
                 collection.insert_one(document)
-
-
-
-def ingest_data_stocks(symbol,start,end):
-
-    """ingests data for specific lot within specific time interval
-    """
-    pass
-
