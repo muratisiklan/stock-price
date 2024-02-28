@@ -22,6 +22,50 @@ def get_data_from_yfinance(symbol, start_date, end_date):
             f"Error fetching data for {symbol} from {start_date} to {end_date}: {e}")
 
 
+def create_update_collections(connection_string, database, symbols_list):
+    """cretes data frame for given symbol list starting from 2015-01-01 to now+1 (now is included)
+    """
+    client = MongoClient(connection_string)
+    db = client[database]
+
+    for symbol in symbols_list:
+
+        collection = db[symbol]
+        most_recent_document = collection.find_one({}, sort=[('_id', -1)])
+        if most_recent_document:
+            most_recent_id = most_recent_document["_id"]
+            most_recent_date = datetime.strptime(most_recent_id, "%Y-%m-%d")
+            one_day_later = most_recent_date + timedelta(days=1)
+            start_date = one_day_later.strftime("%Y-%m-%d")
+
+            now = datetime.now()
+            tomorrow = now + timedelta(days=1)
+            end_date = tomorrow.strftime("%Y-%m-%d")
+        else:
+            start_date = "2015-01-01"
+            tomorrow = datetime.now() + timedelta(days=1)
+            end_date = tomorrow.strftime("%Y-%m-%d")
+
+        data = get_data_from_yfinance(symbol, start_date, end_date)
+
+        if data.empty:
+            print(f"No data retrieved for {symbol}")
+            continue
+
+        data['_id'] = pd.to_datetime(data['Date']).dt.strftime("%Y-%m-%d")
+
+        # Drop the original 'Date' column
+        data = data.drop(columns=['Date'])
+
+        # Convert the DataFrame to a list of dictionaries
+        data_list = data.to_dict(orient='records')
+
+        # Insert the data into the MongoDB collection
+        collection.insert_many(data_list)
+
+    client.close()
+
+
 def update_interest_collection():
     MONGO_URI = "mongodb://127.0.0.1:27017/"
     DB_NAME = "stockdata"
