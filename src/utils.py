@@ -22,11 +22,11 @@ def get_data_from_yfinance(symbol, start_date, end_date):
             f"Error fetching data for {symbol} from {start_date} to {end_date}: {e}")
 
 
-def create_update_collections(connection_string, database, symbols_list):
+def create_update_collections(connection_string, symbols_list):
     """cretes data frame for given symbol list starting from 2015-01-01 to now+1 (now is included)
     """
     client = MongoClient(connection_string)
-    db = client[database]
+    db = client["stockdata"]
 
     for symbol in symbols_list:
 
@@ -66,54 +66,22 @@ def create_update_collections(connection_string, database, symbols_list):
     client.close()
 
 
-def update_interest_collection():
-    MONGO_URI = "mongodb://127.0.0.1:27017/"
-    DB_NAME = "stockdata"
-    COLLECTION_NAME = "interest"
-    EXCEL_FILE_PATH = "/Users/muratisiklan/Desktop/stock-price/Artifacts/base_data/interest_rates.xlsx"
+def get_historical_data(connection_string: str, symbol: str, last_n: int):
+    try:
+        # Connect to MongoDB
+        client = MongoClient(connection_string)
+        db = client["stockdata"]
+        collection = db[symbol]
 
-    with MongoClient(MONGO_URI) as client:
-        db = client[DB_NAME]
-        collection = db[COLLECTION_NAME]
+        # Retrieve the last N documents for the given symbol
+        cursor = collection.find().sort("_id", -1).limit(last_n)
+        data_list = list(cursor)
 
-        # Find the most recent entry in the collection
-        most_recent_entry = collection.find_one(sort=[('_id', -1)])
+        # Convert the selected documents into a DataFrame
+        df = pd.DataFrame(data_list)
 
-        most_recent_date_str = most_recent_entry.get("_id")
-        most_recent_date = datetime.strptime(
-            most_recent_date_str, "%Y-%m-%d")
-        today = datetime.now().strftime("%Y-%m-%d")
+        return df
 
-        if today == most_recent_date:
-            print("Interest collection is up to date")
-
-        else:
-
-            df = pd.read_excel(EXCEL_FILE_PATH, parse_dates=['Date'])
-            df['Date'] = df['Date'].dt.strftime('%Y-%m-%d')
-
-            most_recent_rate = df.loc[df['Date'].idxmax()]['Rate']
-
-            # Check if the most recent entry is from today
-            if most_recent_date.date() == datetime.now().date():
-                print("Most recent entry is from today. No updates needed.")
-                return
-
-            # Calculate the number of days between most_recent_date and today
-            days_difference = (datetime.now() - most_recent_date).days
-
-            # Generate a date range based on the number of days
-            date_range = [most_recent_date +
-                          timedelta(days=i) for i in range(1, days_difference + 1)]
-
-            for date in date_range:
-                date_str = date.strftime("%Y-%m-%d")
-
-                # Create a document
-                document = {
-                    "_id": date_str,
-                    "Rate": most_recent_rate
-                }
-
-                # Insert the document into the collection
-                collection.insert_one(document)
+    finally:
+        # Close the MongoDB connection
+        client.close()
