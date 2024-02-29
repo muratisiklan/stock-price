@@ -2,7 +2,7 @@ import yfinance as yf
 import pandas as pd
 from pymongo import MongoClient
 from datetime import datetime, timedelta
-import numpy as np
+import plotly.express as px
 
 
 def get_data_from_yfinance(symbol, start_date, end_date):
@@ -84,4 +84,35 @@ def get_historical_data(connection_string: str, symbol: str, last_n: int):
 
     finally:
         # Close the MongoDB connection
+        client.close()
+
+
+def plot_stock(symbol, last_n):
+    try:
+        client = MongoClient("mongodb://127.0.0.1:27017/")
+        db = client["stockdata"]
+        collection = db[symbol]
+
+        cursor = collection.find().sort("_id", -1).limit(last_n)
+        data_list = list(cursor)
+
+        df = pd.DataFrame(data_list)
+
+        df["_id"] = pd.to_datetime(df["_id"])
+
+        fig = px.line(df, x="_id", y=["Open", "High", "Low", "Close"],
+                      labels={"_id": "Date", "value": "Price"},
+                      title=f"Stock Price Over Time {symbol}")
+
+        fig.update_layout(
+            xaxis_title="Date",
+            yaxis_title="Price",
+            legend_title="Type",
+            hovermode="x",
+            template="plotly_dark"
+        )
+
+        fig.show()
+
+    finally:
         client.close()
