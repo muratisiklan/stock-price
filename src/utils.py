@@ -22,11 +22,13 @@ def get_data_from_yfinance(symbol, start_date, end_date):
             f"Error fetching data for {symbol} from {start_date} to {end_date}: {e}")
 
 
-def create_update_collections(connection_string, symbols_list):
+def create_update_collections(connection_string, database,symbols_list):
+
     """cretes data frame for given symbol list starting from 2015-01-01 to now+1 (now is included)
     """
     client = MongoClient(connection_string)
-    db = client["stockdata"]
+    db = client[database]
+        
 
     for symbol in symbols_list:
 
@@ -46,7 +48,9 @@ def create_update_collections(connection_string, symbols_list):
             tomorrow = datetime.now() + timedelta(days=1)
             end_date = tomorrow.strftime("%Y-%m-%d")
 
-        data = get_data_from_yfinance(symbol, start_date, end_date)
+
+        
+        data = get_data_from_yfinance(symbol, start_date,end_date)
 
         if data.empty:
             print(f"No data retrieved for {symbol}")
@@ -64,7 +68,6 @@ def create_update_collections(connection_string, symbols_list):
         collection.insert_many(data_list)
 
     client.close()
-
 
 def get_historical_data(connection_string: str, symbol: str, last_n: int):
     try:
@@ -100,7 +103,7 @@ def plot_stock(symbol, last_n):
 
         df["_id"] = pd.to_datetime(df["_id"])
 
-        fig = px.line(df, x="_id", y=["Open", "High", "Low", "Close"],
+        fig = px.line(df, x="_id", y=["Open", "High", "Low", "Close"], 
                       labels={"_id": "Date", "value": "Price"},
                       title=f"Stock Price Over Time {symbol}")
 
@@ -109,7 +112,9 @@ def plot_stock(symbol, last_n):
             yaxis_title="Price",
             legend_title="Type",
             hovermode="x",
-            template="plotly_dark"
+            template="plotly_dark",
+            width = 1500,
+            height = 750
         )
 
         fig.show()
