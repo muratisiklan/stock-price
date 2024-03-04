@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 import plotly.express as px
 
 
-def get_data_from_yfinance(symbol, start_date, end_date):
+def get_data_from_yfinance(symbol:str, start_date:str, end_date:str):
     # Includes start, excludes end date
     start_date = datetime.strptime(start_date, '%Y-%m-%d')
     end_date = datetime.strptime(end_date, '%Y-%m-%d')
@@ -22,7 +22,7 @@ def get_data_from_yfinance(symbol, start_date, end_date):
             f"Error fetching data for {symbol} from {start_date} to {end_date}: {e}")
 
 
-def create_update_collections(connection_string, database,symbols_list):
+def create_update_collections(connection_string:str, database:str,symbols_list:list)->None:
 
     """cretes data frame for given symbol list starting from 2015-01-01 to now+1 (now is included)
     """
@@ -69,7 +69,7 @@ def create_update_collections(connection_string, database,symbols_list):
 
     client.close()
 
-def get_historical_data(connection_string: str, symbol: str, last_n: int):
+def get_historical_data(connection_string: str, symbol: str, last_n: int) -> pd.DataFrame:
     try:
         # Connect to MongoDB
         client = MongoClient(connection_string)
@@ -90,7 +90,7 @@ def get_historical_data(connection_string: str, symbol: str, last_n: int):
         client.close()
 
 
-def plot_stock(symbol, last_n):
+def plot_stock(symbol, last_n) -> None:
     try:
         client = MongoClient("mongodb://127.0.0.1:27017/")
         db = client["stockdata"]
