@@ -66,6 +66,7 @@ def calculate_total_return(stock_prices: List[StockPrice]) -> float:
 
 
 
-# if __name__ == "__main__":
-#     stock_ingestion = StockIngestion()
-#     stock_ingestion.initiate_stock_ingestion()
+if __name__ == "__main__":
+    stock_ingestion = StockIngestion()
+    stock_ingestion.initiate_stock_ingestion()
+    
