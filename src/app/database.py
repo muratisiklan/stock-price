@@ -5,7 +5,7 @@ from typing import Annotated
 # from fastapi import Depends
 
 ## change databse
-SQLALCHEMY_DATABASE_URL = "postgresql://postgres:postgres@localhost/TodoApplicationDatabase"
+SQLALCHEMY_DATABASE_URL = "postgresql://postgres:postgres@localhost/InvestmentAppDB"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
