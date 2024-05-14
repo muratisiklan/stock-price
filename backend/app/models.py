@@ -2,7 +2,7 @@ from .database import Base
 from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 
 
-class Users(Base):
+class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -17,7 +17,7 @@ class Users(Base):
 
 
 class Investment(Base):
-    __tablename__ = "todos"
+    __tablename__ = "investments"
 
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String)

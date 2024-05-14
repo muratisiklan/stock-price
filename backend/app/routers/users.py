@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Path, Query
-from ..models import Users
+from ..models import User
 from typing import Annotated
 from starlette import status
 from .auth import get_current_user,bcrypt_context
@@ -22,7 +22,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def get_user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
-    user_model = db.query(Users).filter(user.get("id") == Users.id).all()
+    user_model = db.query(User).filter(user.get("id") == User.id).all()
     if not user_model:
         raise HTTPException(status_code=404, detail="User not found")
     return user_model
@@ -33,7 +33,7 @@ async def change_password(user: user_dependency, db: db_dependency, user_verific
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
-    user_model = db.query(Users).filter(Users.id == user.get("id")).first()
+    user_model = db.query(User).filter(User.id == user.get("id")).first()
     if not bcrypt_context.verify(user_verification.password, user_model.hashed_password):
         raise HTTPException(status_code=401, detail="Error on password change")
 
@@ -50,7 +50,7 @@ async def change_phone_number(user: user_dependency,
     if user is None:
         raise HTTPException(status_code=401, detail="Auath failed!")
 
-    user_model = db.query(Users).filter(Users.id == user.get("id")).first()
+    user_model = db.query(User).filter(User.id == user.get("id")).first()
 
     user_model.phone_number = phone_number
     db.add(user_model)

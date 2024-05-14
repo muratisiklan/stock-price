@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
-from ..models import Users
+from ..models import User
 from datetime import timedelta, datetime
 from passlib.context import CryptContext
 from typing import Annotated
@@ -26,7 +26,7 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 def authenticate_user(username: str, password: str, db):
-    user = db.query(Users).filter(Users.username == username).first()
+    user = db.query(User).filter(User.username == username).first()
     if not user:
         return False
     if not bcrypt_context.verify(password, user.hashed_password):
@@ -60,7 +60,7 @@ async def get_current_user(token: Annotated[str, Depends(oath2_bearer)]):
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency,
                       user_request: CreateUserRequest):
-    create_user_model = Users(
+    create_user_model = User(
         email=user_request.email,
         username=user_request.username,
         first_name=user_request.first_name,

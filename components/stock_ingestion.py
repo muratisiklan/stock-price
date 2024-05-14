@@ -4,9 +4,9 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 from pymongo import MongoClient
-from src.utils import get_data_from_yfinance
-from src.exception import CustomException
-from src.logger import logging
+from backend.utils import get_data_from_yfinance
+from backend.exception import CustomException
+from backend.logger import logging
 
 @dataclass
 class StockIngestionConfig:
