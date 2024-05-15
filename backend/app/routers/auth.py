@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..schemas import CreateUserRequest, TokenSchema
 from jose import jwt, JWTError
+from ..config import settings_api
+
 
 router = APIRouter(
     prefix="/auth",
@@ -16,8 +18,9 @@ router = APIRouter(
 )
 
 
-SECRET_KEY = "69bf63c007dc206fcf47a4c3cb7bd2828d0255495f8b83376bb3d4dd6894210d"
-ALGORITHM = "HS256"
+SECRET_KEY = settings_api.secret_key
+ALGORITHM = settings_api.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = settings_api.access_token_expire_minutes
 
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -84,5 +87,5 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
                             detail="Could not validate user")
 
     token = create_access_token(
-        user.username, user.id, user.role, timedelta(minutes=20))
+        user.username, user.id, user.role, timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
     return {"access_token": token, "token_type": "bearer"}
