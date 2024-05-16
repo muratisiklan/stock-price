@@ -6,8 +6,6 @@ from starlette import status
 from typing import Annotated
 from ..models import Investment
 from ..schemas import InvestmenRequest
-import sys
-sys.path.append("..")
 
 
 router = APIRouter(
@@ -42,11 +40,11 @@ async def read_investment_by_id(user: user_dependency,
 
 @router.post("/investment", status_code=status.HTTP_201_CREATED)
 async def create_investment(user: user_dependency,
-                            db: db_dependency, todo_request: InvestmenRequest):
+                            db: db_dependency, ivestment_request: InvestmenRequest):
 
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
-    investment = Investment(**todo_request.model_dump(),
+    investment = Investment(**ivestment_request.model_dump(),
                             owner_id=user.get("id"))
 
     db.add(investment)
@@ -62,10 +60,11 @@ async def update_investment(user: user_dependency,
         Investment.id == id, Investment.owner_id == user.get("id")).first()
     if investment:
         investment.title = request.title
-        investment.description = request.description
-        investment.priority = request.priority
         investment.company = request.company
-        investment.complete = request.complete
+        investment.description = request.description
+        investment.date_invested = request.date_invested
+        investment.unit_price = request.date_invested
+        investment.quantity = request.quantity
     else:
         raise HTTPException(status_code=404, detail="Investment not found")
 

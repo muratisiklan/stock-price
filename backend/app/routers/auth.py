@@ -7,7 +7,7 @@ from starlette import status
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..schemas import CreateUserRequest, TokenSchema
+from ..schemas import UserCreateRequest, TokenSchema
 from jose import jwt, JWTError
 from ..config import settings_api
 
@@ -62,17 +62,18 @@ async def get_current_user(token: Annotated[str, Depends(oath2_bearer)]):
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(db: db_dependency,
-                      user_request: CreateUserRequest):
-    create_user_model = User(
-        email=user_request.email,
-        username=user_request.username,
-        first_name=user_request.first_name,
-        last_name=user_request.last_name,
-        role=user_request.role,
-        hashed_password=bcrypt_context.hash(user_request.password),
-        is_active=True,
-        phone_number=user_request.phone_number
-    )
+                      user_request: UserCreateRequest):
+    user_data = {
+        "email": user_request.email,
+        "username": user_request.username,
+        "first_name": user_request.first_name,
+        "last_name": user_request.last_name,
+        "hashed_password": bcrypt_context.hash(user_request.password),
+        "is_active": True,
+        "phone_number": user_request.phone_number
+    }
+
+    create_user_model = User(**user_data)
 
     db.add(create_user_model)
     db.commit()

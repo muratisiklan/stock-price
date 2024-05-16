@@ -1,4 +1,6 @@
 from pydantic import BaseModel, Field
+from datetime import date
+from typing import Optional
 
 """"""
 # models for investments
@@ -8,23 +10,26 @@ from pydantic import BaseModel, Field
 
 class InvestmenRequest(BaseModel):
     title: str = Field(min_length=3)
-    description: str = Field(min_length=3, max_length=100)
-    priority: int = Field(gt=0, lt=6)
     company: str = Field(min_length=2)
-    complete: bool
+    description: str = Field(min_length=3, max_length=100)
+    date_invested: Optional[date]
+    unit_price: float
+    quantity: int
+
 
 """"""
 # Models for Auath
 """"""
 
-class CreateUserRequest(BaseModel):
-    username: str
-    email: str
-    first_name: str
-    last_name: str
-    password: str
-    role: str
-    phone_number: str
+
+class UserCreateRequest(BaseModel):
+    username: str = Field(..., description="Username of the user")
+    email: str = Field(..., description="Email address of the user")
+    first_name: str = Field(..., description="First name of the user")
+    last_name: str = Field(..., description="Last name of the user")
+    password: str = Field(..., description="Password of the user")
+    phone_number: str = Field(..., description="Phone number of the user")
+
 
 class TokenSchema(BaseModel):
     access_token: str
@@ -35,6 +40,7 @@ class TokenSchema(BaseModel):
 # For user verification
 
 """"""
+
 
 class UserVerification(BaseModel):
     password: str

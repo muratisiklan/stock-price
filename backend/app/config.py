@@ -11,8 +11,8 @@ class SettingsApi(BaseSettings):
     algorithm: str
     access_token_expire_minutes: int
 
-    # class Config:
-    #     env_file = ".env.api"
+    class Config:
+        env_file = ".env.backend"
 
 
 settings_api = SettingsApi()

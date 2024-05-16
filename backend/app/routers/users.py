@@ -2,9 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, Path, Query
 from ..models import User
 from typing import Annotated
 from starlette import status
-from .auth import get_current_user,bcrypt_context
+from .auth import get_current_user, bcrypt_context
 from ..database import get_db
-from passlib.context import CryptContext
 from sqlalchemy.orm import Session
 from ..schemas import UserVerification
 
@@ -15,7 +14,6 @@ router = APIRouter(
 
 user_dependency = Annotated[dict, Depends(get_current_user)]
 db_dependency = Annotated[Session, Depends(get_db)]
-# bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 @router.get("/", status_code=status.HTTP_200_OK)
