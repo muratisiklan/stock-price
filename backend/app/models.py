@@ -1,6 +1,6 @@
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy.types import Boolean, Integer, String, Float
-from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.sql.sqltypes import DATE,TIMESTAMP
 from sqlalchemy.sql.expression import text
 
 
@@ -17,7 +17,8 @@ class User(Base):
     first_name = Column(String)
     last_name = Column(String)
     hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text("now()"))    
     role = Column(String, default="pleb")
     phone_number = Column(String)
 
@@ -30,8 +31,10 @@ class Investment(Base):
     company = Column(String)
     description = Column(String)
     complete = Column(Boolean, default=False)
-    date_invested = Column(TIMESTAMP(timezone=True),
+    date_invested = Column(DATE,
                         nullable=False, server_default=text("now()"))    
+    created_at = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text("now()")) 
     unit_price = Column(Float)
     quantity = Column(Integer)
     owner_id = Column(Integer, ForeignKey("users.id"))
