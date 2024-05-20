@@ -1,11 +1,12 @@
-from .database import Base
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy.types import Integer, String, Boolean, Date, Float
-from datetime import datetime
+from sqlalchemy.types import Boolean, Integer, String, Float
+from sqlalchemy.sql.sqltypes import TIMESTAMP
+from sqlalchemy.sql.expression import text
 
 
-def default_date():
-    return datetime.today().date()
+
+from .database import Base
+
 
 class User(Base):
     __tablename__ = "users"
@@ -29,7 +30,8 @@ class Investment(Base):
     company = Column(String)
     description = Column(String)
     complete = Column(Boolean, default=False)
-    date_invested = Column(Date, default=default_date)
+    date_invested = Column(TIMESTAMP(timezone=True),
+                        nullable=False, server_default=text("now()"))    
     unit_price = Column(Float)
     quantity = Column(Integer)
     owner_id = Column(Integer, ForeignKey("users.id"))

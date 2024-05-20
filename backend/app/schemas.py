@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
-from datetime import date
 from typing import Optional
+from datetime import datetime
 
 """"""
 # models for investments
@@ -12,7 +12,7 @@ class InvestmenRequest(BaseModel):
     title: str = Field(min_length=3)
     company: str = Field(min_length=2)
     description: str = Field(min_length=3, max_length=100)
-    date_invested: Optional[date]
+    date_invested: Optional[datetime]
     unit_price: float
     quantity: int
 
