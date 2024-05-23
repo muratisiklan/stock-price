@@ -1,1 +1,0 @@
-20 18 * * * python3 /usr/src/app/stock_ingestion.py

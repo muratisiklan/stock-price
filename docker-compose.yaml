@@ -5,23 +5,15 @@ services:
     ports:
       - 8000:8000
     env_file:
-        - ./.env.backend
+      - ./.env.backend
     depends_on:
       - postgres
   postgres:
     image: postgres
     env_file:
-        - ./.env.postgres
+      - ./.env.postgres
     volumes:
       - postgres-db:/var/lib/postgresql/data
-  mongo:
-    image: mongo
-    env_file:
-      - ./.env.mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-db:/var/lib/mongodb/data
-
 volumes:
   postgres-db:
+

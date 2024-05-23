@@ -1,17 +1,15 @@
-from fastapi import APIRouter, Depends, HTTPException, Path
-from ..database import get_db
-from sqlalchemy.orm import Session
-from .auth import get_current_user
-from starlette import status
 from typing import Annotated
-from ..models import Investment
+
+from fastapi import APIRouter, Depends, HTTPException, Path
+from sqlalchemy.orm import Session
+from starlette import status
+
+from ..database import get_db
+from ..models import Investment, User
 from ..schemas import InvestmenRequest
+from .auth import get_current_user
 
-
-router = APIRouter(
-    prefix="/investment",
-    tags=["investment"]
-)
+router = APIRouter(prefix="/investment", tags=["investment"])
 
 user_dependency = Annotated[dict, Depends(get_current_user)]
 db_dependency = Annotated[Session, Depends(get_db)]
@@ -26,12 +24,16 @@ async def read_all_investments(db: db_dependency, user: user_dependency):
 
 
 @router.get("/investment/{id}", status_code=status.HTTP_200_OK)
-async def read_investment_by_id(user: user_dependency,
-                                db: db_dependency, id: int = Path(gt=0)):
+async def read_investment_by_id(
+    user: user_dependency, db: db_dependency, id: int = Path(gt=0)
+):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
-    investment = db.query(Investment).filter(
-        Investment.id == id, Investment.owner_id == user.get("id")).first()
+    investment = (
+        db.query(Investment)
+        .filter(Investment.id == id, Investment.owner_id == user.get("id"))
+        .first()
+    )
     if investment:
         return investment
     else:
@@ -39,25 +41,36 @@ async def read_investment_by_id(user: user_dependency,
 
 
 @router.post("/investment", status_code=status.HTTP_201_CREATED)
-async def create_investment(user: user_dependency,
-                            db: db_dependency, ivestment_request: InvestmenRequest):
+async def create_investment(
+    user: user_dependency, db: db_dependency, ivestment_request: InvestmenRequest
+):
 
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
-    investment = Investment(**ivestment_request.model_dump(),
-                            owner_id=user.get("id"))
+    investment = Investment(**ivestment_request.model_dump(), owner_id=user.get("id"))
+    user = db.query(User).filter(User.id == user.get("id")).first()
+    if user:
+        user.total_investments += 1
 
+    db.add(user)
     db.add(investment)
     db.commit()
 
 
 @router.put("/investment/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_investment(user: user_dependency,
-                            db: db_dependency,  request: InvestmenRequest, id: int = Path(gt=0)):
+async def update_investment(
+    user: user_dependency,
+    db: db_dependency,
+    request: InvestmenRequest,
+    id: int = Path(gt=0),
+):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
-    investment = db.query(Investment).filter(
-        Investment.id == id, Investment.owner_id == user.get("id")).first()
+    investment = (
+        db.query(Investment)
+        .filter(Investment.id == id, Investment.owner_id == user.get("id"))
+        .first()
+    )
     if investment:
         investment.title = request.title
         investment.company = request.company
@@ -73,16 +86,21 @@ async def update_investment(user: user_dependency,
 
 
 @router.delete("/investment/{id}")
-async def delete_investment(user: user_dependency,
-                            db: db_dependency, id: int = Path(gt=0)):
+async def delete_investment(
+    user: user_dependency, db: db_dependency, id: int = Path(gt=0)
+):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
-    investment = db.query(Investment).filter(
-        id == Investment.id, Investment.owner_id == user.get("id")).first()
+    investment = (
+        db.query(Investment)
+        .filter(id == Investment.id, Investment.owner_id == user.get("id"))
+        .first()
+    )
     if investment:
-        db.query(Investment).filter(Investment.id == id,
-                                    Investment.owner_id == user.get("id")).delete()
+        db.query(Investment).filter(
+            Investment.id == id, Investment.owner_id == user.get("id")
+        ).delete()
 
     else:
         raise HTTPException(status_code=404, detail="Investment not found!")
