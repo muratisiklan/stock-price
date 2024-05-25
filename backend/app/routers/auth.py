@@ -59,7 +59,7 @@ async def get_current_user(token: Annotated[str, Depends(oath2_bearer)]):
         return {"username": username, "id": user_id, "user_role": user_role}
     except JWTError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="COuld not validate user"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Could not validate user"
         )
 
 
@@ -71,7 +71,8 @@ async def create_user(db: db_dependency, user_request: UserCreateRequest):
         "first_name": user_request.first_name,
         "last_name": user_request.last_name,
         "hashed_password": bcrypt_context.hash(user_request.password),
-        "total_investments": 0,
+        "total_investment": 0,
+        "number_of_investments":0,
         "phone_number": user_request.phone_number,
     }
     create_user_model = User(**user_data)

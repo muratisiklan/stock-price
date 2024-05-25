@@ -20,7 +20,9 @@ class User(Base):
     )
     role = Column(String, default="pleb")
     phone_number = Column(String)
-    total_investments = Column(Integer, nullable=False, default=0)
+    # ? number of investments and total investment is incremented in Investment post request
+    number_of_investments = Column(Integer, nullable=False, default=0)
+    total_investment = Column(Integer, nullable=False, default=0)
 
 
 class Investment(Base):
@@ -30,7 +32,7 @@ class Investment(Base):
     title = Column(String)
     company = Column(String)
     description = Column(String)
-    complete = Column(Boolean, default=False)
+    is_active = Column(Boolean, default=True)
     date_invested = Column(DATE, nullable=False, server_default=text("now()"))
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
@@ -38,3 +40,12 @@ class Investment(Base):
     unit_price = Column(Float)
     quantity = Column(Integer)
     owner_id = Column(Integer, ForeignKey("users.id"))
+
+
+# class Company(Base):
+#     __tablename__ = "companies"
+
+#     id = Column(Integer, primary_key=True,index=True,autoincrement=True)
+#     name = Column(String,nullable=False)
+#     times_invested = Column(Integer,nullable=False,default=0)
+#     amount_invested =Column(Integer,nullable=False,default=0)
