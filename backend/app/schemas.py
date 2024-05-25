@@ -18,6 +18,20 @@ class InvestmenRequest(BaseModel):
     quantity: int
 
 
+
+
+""""""
+# Models fo Divestments
+""""""
+# class DivestmentRequest(BaseModel):
+#     #?come from dropdwn menu?
+#     quantity: int
+#     unit_price: float
+#     investment_id:int
+#     date_divested = Optional[date]
+
+
+
 """"""
 # Models for Auath
 """"""
@@ -39,10 +53,7 @@ class TokenSchema(BaseModel):
 
 """"""
 # For user verification
-
 """"""
-
-
 class UserVerification(BaseModel):
     password: str
     new_password: str = Field(min_length=2)

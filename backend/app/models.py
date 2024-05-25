@@ -23,6 +23,8 @@ class User(Base):
     # ? number of investments and total investment is incremented in Investment post request
     number_of_investments = Column(Integer, nullable=False, default=0)
     total_investment = Column(Integer, nullable=False, default=0)
+    number_of_divestments = Column(Integer, nullable=False, default=0)
+    total_divestments = Column(Integer, nullable=False, default=0)
 
 
 class Investment(Base):
@@ -40,6 +42,22 @@ class Investment(Base):
     unit_price = Column(Float)
     quantity = Column(Integer)
     owner_id = Column(Integer, ForeignKey("users.id"))
+
+
+# class Divestment(Base):
+#     __tablename__ = "divestments"
+
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+#     quantity = Column(Integer)
+#     unit_price = Column(Float)
+#     date_divested = Column(DATE, nullable=False, server_default=text("now()"))
+#     created_at = Column(
+#         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+#     )
+#     investment_id = Column(Integer, ForeignKey("investments.id"))
+#     owner_id = Column(Integer, ForeignKey("users.id"))
+
+
 
 
 # class Company(Base):
