@@ -6,7 +6,7 @@ from starlette import status
 
 from ..database import get_db
 from ..models import User
-from ..schemas import UserVerification
+from ..schemas.auth_schema import UserVerification
 from .auth import bcrypt_context, get_current_user
 
 router = APIRouter(prefix="/user", tags=["user"])

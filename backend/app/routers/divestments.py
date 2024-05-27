@@ -6,7 +6,7 @@
 
 # from ..database import get_db
 # from ..models import Investment, User, Divestment
-# from ..schemas import DivestmentRequest
+# from ..schemas.divestment_schema import DivestmentRequest
 # from .auth import get_current_user
 
 # router = APIRouter(prefix="/divestment", tags=["divestment"])

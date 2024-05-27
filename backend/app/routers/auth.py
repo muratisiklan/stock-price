@@ -11,7 +11,8 @@ from starlette import status
 from ..config import settings_api
 from ..database import get_db
 from ..models import User
-from ..schemas import TokenSchema, UserCreateRequest
+from ..schemas.auth_schema import TokenSchema
+from ..schemas.user_schema import UserCreateRequest
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -72,7 +73,7 @@ async def create_user(db: db_dependency, user_request: UserCreateRequest):
         "last_name": user_request.last_name,
         "hashed_password": bcrypt_context.hash(user_request.password),
         "total_investment": 0,
-        "number_of_investments":0,
+        "number_of_investments": 0,
         "phone_number": user_request.phone_number,
     }
     create_user_model = User(**user_data)

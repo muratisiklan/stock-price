@@ -54,8 +54,8 @@ class Investment(Base):
 #     created_at = Column(
 #         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
 #     )
-#     investment_id = Column(Integer, ForeignKey("investments.id"))
-#     owner_id = Column(Integer, ForeignKey("users.id"))
+#     investment_id = Column(Integer, ForeignKey("investments.id"), nullable=False)
+#     owner_id = Column(Integer, ForeignKey("users.id"),nullable=False)
 
 
 
