@@ -10,15 +10,15 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+    role = Column(String, default="pleb")
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     first_name = Column(String)
     last_name = Column(String)
     hashed_password = Column(String)
-    created_at = Column(
-        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-    )
-    role = Column(String, default="pleb")
     phone_number = Column(String)
     # ? number of investments and total investment is incremented in Investment post request
     number_of_investments = Column(Integer, nullable=False, default=0)
@@ -31,39 +31,24 @@ class Investment(Base):
     __tablename__ = "investments"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    date_invested = Column(DATE, nullable=False, server_default=text("now()"))
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    is_active = Column(Boolean, default=True)
     title = Column(String)
     company = Column(String)
     description = Column(String)
-    is_active = Column(Boolean, default=True)
-    date_invested = Column(DATE, nullable=False, server_default=text("now()"))
-    created_at = Column(
-        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-    )
     unit_price = Column(Float)
     quantity = Column(Integer)
+
+
+    divestment_unit_price = Column(Float)
+    divestment_quantity = Column(Integer)
+    date_divested = Column(DATE, nullable=True)
+    
+    
     owner_id = Column(Integer, ForeignKey("users.id"))
 
 
-# class Divestment(Base):
-#     __tablename__ = "divestments"
-
-#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-#     quantity = Column(Integer)
-#     unit_price = Column(Float)
-#     date_divested = Column(DATE, nullable=False, server_default=text("now()"))
-#     created_at = Column(
-#         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
-#     )
-#     investment_id = Column(Integer, ForeignKey("investments.id"), nullable=False)
-#     owner_id = Column(Integer, ForeignKey("users.id"),nullable=False)
 
 
-
-
-# class Company(Base):
-#     __tablename__ = "companies"
-
-#     id = Column(Integer, primary_key=True,index=True,autoincrement=True)
-#     name = Column(String,nullable=False)
-#     times_invested = Column(Integer,nullable=False,default=0)
-#     amount_invested =Column(Integer,nullable=False,default=0)

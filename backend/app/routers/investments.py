@@ -6,9 +6,8 @@ from starlette import status
 
 from ..database import get_db
 from ..models import Investment, User
+from ..schemas.investment_schema import InvestmentRequest
 from .auth import get_current_user
-from ..schemas.investment_schema import InvestmenRequest
-
 
 router = APIRouter(prefix="/investment", tags=["investment"])
 
@@ -40,23 +39,24 @@ async def read_investment_by_id(
     else:
         raise HTTPException(status_code=404, detail="Investment not found!")
 
+
 # ? SOME OTHER COLUMNS FROM USER TABLE ARE INCREMENTED HERE
 
 
 @router.post("/investment", status_code=status.HTTP_201_CREATED)
 async def create_investment(
-    user: user_dependency, db: db_dependency, investment_request: InvestmenRequest
+    user: user_dependency, db: db_dependency, investment_request: InvestmentRequest
 ):
 
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
-    investment = Investment(
-        **investment_request.model_dump(), owner_id=user.get("id"))
+    investment = Investment(**investment_request.model_dump(), owner_id=user.get("id"))
     user = db.query(User).filter(User.id == user.get("id")).first()
     if user:
         user.number_of_investments += 1
-        user.total_investment += (investment_request.unit_price *
-                                  investment_request.quantity)
+        user.total_investment += (
+            investment_request.unit_price * investment_request.quantity
+        )
 
     db.add(user)
     db.add(investment)
@@ -67,7 +67,7 @@ async def create_investment(
 async def update_investment(
     user: user_dependency,
     db: db_dependency,
-    request: InvestmenRequest,
+    request: InvestmentRequest,
     id: int = Path(gt=0),
 ):
     if user is None:
