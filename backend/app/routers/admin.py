@@ -24,13 +24,13 @@ async def read_all(user: user_dependency, db: db_dependency):
 
 
 @router.delete("/investment/{investment_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_todo(user: user_dependency, db: db_dependency, investment_id: int = Path(gt=0)):
+async def delete_investment(user: user_dependency, db: db_dependency, investment_id: int = Path(gt=0)):
     if user is None or user.get("user_role") != "admin":
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
-    todo_model = db.query(Investment).filter(
+    investment_model = db.query(Investment).filter(
         Investment.id == investment_id).first()
-    if todo_model is None:
+    if investment_model is None:
         raise HTTPException(status_code=404, detail="Investment not found")
 
     db.query(Investment).filter(Investment.id == investment_id).delete()

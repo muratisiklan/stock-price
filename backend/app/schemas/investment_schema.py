@@ -11,3 +11,4 @@ class InvestmentRequest(BaseModel):
     date_invested: Optional[date]
     unit_price: float
     quantity: int
+    

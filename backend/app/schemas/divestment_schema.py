@@ -1,14 +1,12 @@
 from datetime import date
 from typing import Optional
 
-from pydantic import BaseModel, Field
-
-
+from pydantic import BaseModel
 
 
 class DivestmentRequest(BaseModel):
-    #?come from dropdwn menu?
-    investment_id:int
-    quantity: int
+    # ?come from dropdwn menu?
+    investment_id: int
     unit_price: float
-    date_divested = Optional[date]
+    quantity: int
+    date_divested : Optional[date]
