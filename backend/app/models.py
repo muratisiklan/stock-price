@@ -39,7 +39,8 @@ class Investment(Base):
     company = Column(String)
     description = Column(String)
     unit_price = Column(Float)
-    quantity = Column(Integer)    
+    quantity = Column(Integer)
+    quantity_remaining = Column(Integer)    
     owner_id = Column(Integer, ForeignKey("users.id"))
 
 class Divestment(Base):

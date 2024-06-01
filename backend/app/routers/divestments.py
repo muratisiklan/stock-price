@@ -44,7 +44,7 @@ async def read_divestment_by_id(
 
 @router.post("/divesment", status_code=status.HTTP_201_CREATED)
 async def create_divestment(
-    user: user_dependency, db: db_dependency, divestment_request: DivestmentRequest,
+    user: user_dependency, db: db_dependency, request: DivestmentRequest,
 ):
     #!Add new divestment to db
 
@@ -52,20 +52,29 @@ async def create_divestment(
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
     divestment = Divestment(
-        **divestment_request.model_dump(), owner_id=user.get("id"))
+        **request.model_dump(), owner_id=user.get("id"))
 
     #! Update information about user
     user_model = db.query(User).filter(User.id == user.get("id")).first()
     if user_model:
         user_model.number_of_divestments += 1
-        user_model.total_divestment += (divestment_request.unit_price *
-                                         divestment_request.quantity)
+        user_model.total_divestment += (request.unit_price *
+                                        request.quantity)
 
     #! Update information about divested investment
 
     investment_model = db.query(Investment).filter(
-        Investment.id == divestment_request.investment_id).first()
-    investment_model.is_active = False
+        Investment.id == request.investment_id).first()
+
+    diff = int(investment_model.quantity_remaining - request.quantity)
+    if diff < 0:
+        raise HTTPException(
+            status_code=401, detail="Cant sell more than you have!")
+    else:
+        if not diff:
+            investment_model.is_active = False
+
+        investment_model.quantity_remaining = diff
 
     db.add(investment_model)
     db.add(user_model)
@@ -80,9 +89,7 @@ async def update_divestment(
     divestment_request: DivestmentRequest,
     id: int = Path(gt=0),
 ):
-
-
-
+    #TODO When divestment changed corresponding changes in users total divestment and total number of divestments columns should be updated
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
@@ -106,13 +113,6 @@ async def update_divestment(
 async def delete_divestment(
     user: user_dependency, db: db_dependency, id: int = Path(gt=0)
 ):
-    #
-    # investment_list = []
-    # for value in db.query(Investment.id).filter(user.get("id") == Investment.owner_id):
-    #     investment_list.append(value)
-    # if id not in investment_list:
-    #     raise HTTPException(
-    #         status_code=401, detail="Investment doesnt belong to current user!")
 
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")

@@ -3,9 +3,10 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 from starlette import status
+from sqlalchemy import func
 
 from ..database import get_db
-from ..models import Investment, User
+from ..models import Investment, User, Divestment
 from ..schemas.investment_schema import InvestmentRequest
 from .auth import get_current_user
 
@@ -51,8 +52,10 @@ async def create_investment(
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
     investment = Investment(
-        **request.model_dump(), owner_id=user.get("id"))
+        **request.model_dump(), owner_id=user.get("id"), quantity_remaining=request.quantity)
     user_model = db.query(User).filter(User.id == user.get("id")).first()
+
+    #! Update users total investment amount and total number of investments
     if user:
         user_model.number_of_investments += 1
         user_model.total_investment += (
@@ -79,6 +82,10 @@ async def update_investment(
         .filter(Investment.id == id, Investment.owner_id == user.get("id"))
         .first()
     )
+    #! If  a divestment already applied for current investment;user not allowed to change investment
+    if investment.quantity_remaining != investment.quantity:
+        raise HTTPException(
+            status_code=401, detail="Cant change already divested investment!")
     old_quantity = investment.quantity
     old_price = investment.unit_price
     #! Update Investment
@@ -90,16 +97,17 @@ async def update_investment(
         investment.date_invested = request.date_invested
         investment.unit_price = request.unit_price
         investment.quantity = request.quantity
+        investment.quantity_remaining = request.quantity
     else:
         raise HTTPException(status_code=404, detail="Investment not found")
 
     #! If quantity or price changed update users' total invested column
     if old_price != request.unit_price or old_quantity != request.quantity:
-        diff = (request.unit_price * request.quantity) - (old_price * old_quantity)
+        diff = (request.unit_price * request.quantity) - \
+            (old_price * old_quantity)
         user_model = db.query(User).filter(User.id == user.get("id")).first()
         user_model.total_investment += diff
         db.add(user_model)
-
 
     db.add(investment)
     db.commit()
@@ -112,24 +120,45 @@ async def delete_investment(
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
+    #! Handle investment
     investment = (
         db.query(Investment)
         .filter(id == Investment.id, Investment.owner_id == user.get("id"))
         .first()
     )
-
-    #! When investment deleted, extract number of investments and investment amount
-    user_model = db.query(User).filter(User.id == user.get("id")).first()
-    user_model.number_of_investments -= 1
-    user_model.total_investment -= (investment.unit_price * investment.quantity)
-
-
+    # When investment deleted, extract number of investments and investment amount
     if investment:
-        db.query(Investment).filter(
-            Investment.id == id, Investment.owner_id == user.get("id")
-        ).delete()
-
+        user_model = db.query(User).filter(User.id == user.get("id")).first()
+        user_model.number_of_investments -= 1
+        user_model.total_investment -= (investment.unit_price *
+                                        investment.quantity)
+  
     else:
         raise HTTPException(status_code=404, detail="Investment not found!")
+
+    #! Delete divestments related with investments too
+    divestment = db.query(Divestment).filter(
+        Divestment.investment_id == id, Divestment.owner_id == user.get("id")
+    ).first()
+
+    if divestment:
+        number_of_divestments = db.query(func.count(Divestment.quantity)).filter(
+            Divestment.investment_id == id).scalar()
+        total_divestment = db.query(func.sum(
+            Divestment.quantity * Divestment.unit_price)).filter(Divestment.investment_id == id).scalar()
+        # Update user's total number of divestments and total divestment quantity
+        user_model.number_of_divestments -= number_of_divestments
+        user_model.total_divestment -= total_divestment
+
+        db.query(Divestment).filter(
+            Divestment.investment_id == id, Divestment.owner_id == user.get(
+                "id")
+        ).delete()
+        
+
+    db.query(Investment).filter(
+        Investment.id == id, Investment.owner_id == user.get("id")
+    ).delete()
+
     db.add(user_model)
     db.commit()
