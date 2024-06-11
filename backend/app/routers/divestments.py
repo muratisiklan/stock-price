@@ -1,5 +1,4 @@
 from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException, Path
 from sqlalchemy.orm import Session
 from starlette import status
@@ -89,7 +88,7 @@ async def update_divestment(
     divestment_request: DivestmentRequest,
     id: int = Path(gt=0),
 ):
-    #TODO When divestment changed corresponding changes in users total divestment and total number of divestments columns should be updated
+    # TODO When divestment changed corresponding changes in users total divestment and total number of divestments columns should be updated
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
@@ -122,11 +121,19 @@ async def delete_divestment(
         .filter(Divestment.id == id, Divestment.owner_id == user.get("id"))
         .first()
     )
+
     if divestment:
+        div_unitprice = divestment.unit_price
+        div_quantity = divestment.quantity
+        # Update users total number of divestment and total divested amount columns
+        user_model = db.query(User).filter(User.id == user.get("id")).first()
+        user_model.number_of_divestments -= 1
+        user_model.total_divestment -= (div_unitprice *
+                                        div_quantity)
+
         db.query(Divestment).filter(
             Divestment.id == id, Divestment.owner_id == user.get("id")
         ).delete()
-
     else:
         raise HTTPException(status_code=404, detail="Divestment not found!")
     db.commit()
