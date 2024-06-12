@@ -131,7 +131,6 @@ async def delete_divestment(
         user_model.total_divestment -= (div_unitprice *
                                         div_quantity)
         # Update quantity remaining for specific investment
-
         investment_model = db.query(Investment).filter(Investment.owner_id == user.get("id"),Investment.id == divestment.investment_id).first()
         investment_model.quantity_remaining += div_quantity
         investment_model.is_active = True
