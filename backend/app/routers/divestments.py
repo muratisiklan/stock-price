@@ -14,81 +14,91 @@ user_dependency = Annotated[dict, Depends(get_current_user)]
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("/",  status_code=status.HTTP_200_OK)
 async def read_all_divestments(db: db_dependency, user: user_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
-    return db.query(Divestment).filter(Divestment.owner_id == user.get("id")).all()
+    divestments = db.query(Divestment).filter(
+        Divestment.owner_id == user.get("id")).all()
+    return divestments
 
 
-@router.get("/divestment/{id}", status_code=status.HTTP_200_OK)
+@router.get("/{id}",  status_code=status.HTTP_200_OK)
 async def read_divestment_by_id(
     user: user_dependency, db: db_dependency, id: int = Path(gt=0)
 ):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
+
     divestment = (
         db.query(Divestment)
         .filter(Divestment.id == id, Divestment.owner_id == user.get("id"))
         .first()
     )
+
     if divestment:
         return divestment
     else:
         raise HTTPException(status_code=404, detail="Divestment not found!")
 
-# ? SOME OTHER COLUMNS FROM USER TABLE ARE INCREMENTED HERE
 
-
-@router.post("/divesment", status_code=status.HTTP_201_CREATED)
+@router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_divestment(
     user: user_dependency, db: db_dependency, request: DivestmentRequest,
 ):
-    #!Add new divestment to db
-
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
-    divestment = Divestment(
-        **request.model_dump(), owner_id=user.get("id"))
-
-    #! Update information about user
-    user_model = db.query(User).filter(User.id == user.get("id")).first()
-    if user_model:
-        user_model.number_of_divestments += 1
-        user_model.total_divestment += (request.unit_price *
-                                        request.quantity)
-
-    #! Update information about divested investment
-
+    # Fetch the investment related to the divestment
     investment_model = db.query(Investment).filter(
         Investment.id == request.investment_id).first()
 
-    diff = int(investment_model.quantity_remaining - request.quantity)
-    if diff < 0:
+    if investment_model is None:
+        raise HTTPException(status_code=404, detail="Investment not found!")
+
+    # Check if the quantity to divest is valid
+    if investment_model.quantity_remaining < request.quantity:
         raise HTTPException(
-            status_code=401, detail="Cant sell more than you have!")
-    else:
-        if not diff:
+            status_code=400, detail="Cannot divest more than the remaining quantity.")
+
+    # Create the new divestment
+    divestment = Divestment(
+        **request.model_dump(),
+        owner_id=user.get("id"),
+        company=investment_model.company
+    )
+
+    # Update user and investment details
+    user_model = db.query(User).filter(User.id == user.get("id")).first()
+    if user_model:
+        user_model.number_of_divestments += 1
+        user_model.total_divestment += (request.unit_price * request.quantity)
+
+    if investment_model:
+        investment_model.quantity_remaining -= request.quantity
+        if investment_model.quantity_remaining == 0:
             investment_model.is_active = False
 
-        investment_model.quantity_remaining = diff
+    try:
+        db.add(divestment)
+        db.commit()
+        db.refresh(divestment)
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500, detail=f"Error creating divestment: {str(e)}")
 
-    db.add(investment_model)
-    db.add(user_model)
-    db.add(divestment)
-    db.commit()
+    return divestment
 
 
-@router.put("/divestment/{id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.put("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def update_divestment(
     user: user_dependency,
     db: db_dependency,
     divestment_request: DivestmentRequest,
     id: int = Path(gt=0),
 ):
-    # TODO When divestment changed corresponding changes in users total divestment and total number of divestments columns should be updated
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
@@ -97,22 +107,28 @@ async def update_divestment(
         .filter(Divestment.id == id, Divestment.owner_id == user.get("id"))
         .first()
     )
-    if divestment:
-        divestment.date_divested = divestment_request.date_divested
-        divestment.unit_price = divestment_request.unit_price
-        divestment.quantity = divestment_request.quantity
-    else:
+
+    if divestment is None:
         raise HTTPException(status_code=404, detail="Divestment not found")
 
-    db.add(divestment)
-    db.commit()
+    # Update divestment details
+    divestment.date_divested = divestment_request.date_divested
+    divestment.unit_price = divestment_request.unit_price
+    divestment.quantity = divestment_request.quantity
+
+    try:
+        db.add(divestment)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500, detail=f"Error updating divestment: {str(e)}")
 
 
-@router.delete("/divestment/{id}")
+@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_divestment(
     user: user_dependency, db: db_dependency, id: int = Path(gt=0)
 ):
-
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
@@ -122,22 +138,27 @@ async def delete_divestment(
         .first()
     )
 
-    if divestment:
-        div_unitprice = divestment.unit_price
-        div_quantity = divestment.quantity
-        # Update users total number of divestment and total divested amount columns
-        user_model = db.query(User).filter(User.id == user.get("id")).first()
+    if divestment is None:
+        raise HTTPException(status_code=404, detail="Divestment not found!")
+
+    # Update user's total number of divestments and total divested amount
+    user_model = db.query(User).filter(User.id == user.get("id")).first()
+    if user_model:
         user_model.number_of_divestments -= 1
-        user_model.total_divestment -= (div_unitprice *
-                                        div_quantity)
-        # Update quantity remaining for specific investment
-        investment_model = db.query(Investment).filter(Investment.owner_id == user.get("id"),Investment.id == divestment.investment_id).first()
-        investment_model.quantity_remaining += div_quantity
+        user_model.total_divestment -= (divestment.unit_price *
+                                        divestment.quantity)
+
+    # Update quantity remaining for specific investment
+    investment_model = db.query(Investment).filter(
+        Investment.id == divestment.investment_id).first()
+    if investment_model:
+        investment_model.quantity_remaining += divestment.quantity
         investment_model.is_active = True
 
-        db.query(Divestment).filter(
-            Divestment.id == id, Divestment.owner_id == user.get("id")
-        ).delete()
-    else:
-        raise HTTPException(status_code=404, detail="Divestment not found!")
-    db.commit()
+    try:
+        db.delete(divestment)
+        db.commit()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(
+            status_code=500, detail=f"Error deleting divestment: {str(e)}")

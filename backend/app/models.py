@@ -11,7 +11,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     created_at = Column(
-      TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
     role = Column(String, default="pleb")
     username = Column(String, unique=True)
@@ -40,8 +40,9 @@ class Investment(Base):
     description = Column(String)
     unit_price = Column(Float)
     quantity = Column(Integer)
-    quantity_remaining = Column(Integer)    
+    quantity_remaining = Column(Integer)
     owner_id = Column(Integer, ForeignKey("users.id"))
+
 
 class Divestment(Base):
     __tablename__ = "divestments"
@@ -50,26 +51,8 @@ class Divestment(Base):
     date_divested = Column(DATE, nullable=False, server_default=text("now()"))
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    company = Column(String)
     unit_price = Column(Float)
     quantity = Column(Integer)
     investment_id = Column(Integer, ForeignKey("investments.id"))
     owner_id = Column(Integer, ForeignKey("users.id"))
-
- 
- 
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
