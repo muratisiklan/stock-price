@@ -11,3 +11,7 @@ class UserCreateRequest(BaseModel):
     last_name: str = Field(..., description="Last name of the user")
     password: str = Field(..., description="Password of the user")
     phone_number: str = Field(..., description="Phone number of the user")
+
+    class Config:
+        orm_mode = True
+

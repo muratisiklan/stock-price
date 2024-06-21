@@ -26,3 +26,4 @@ class AnalyticsResponse(BaseModel):
                 "total_divested": 8000.75
             }
         }
+        orm_mode = True

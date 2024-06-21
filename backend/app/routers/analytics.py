@@ -15,9 +15,7 @@ router = APIRouter(prefix="/analytics", tags=["analytics"])
 user_dependency = Annotated[dict, Depends(get_current_user)]
 db_dependency = Annotated[Session, Depends(get_db)]
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+
 
 
 @router.get("/", response_model=AnalyticsResponse, status_code=status.HTTP_200_OK)
@@ -34,8 +32,7 @@ async def get_data_last_month(db: db_dependency, user: user_dependency):
         Divestment.owner_id == user.get("id")).first()
 
     if not has_investments and not has_divestments:
-        logger.info(
-            f"User {user.get('id')} has no investments or divestments.")
+     
         return AnalyticsResponse(
             num_investments=0,
             distinct_companies_invested=0,

@@ -12,4 +12,5 @@ class InvestmentRequest(BaseModel):
     unit_price: float
     quantity: int
 
-
+    class Config:
+        orm_mode = True
