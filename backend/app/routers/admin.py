@@ -11,9 +11,9 @@ router = APIRouter(
     tags=["admin"]
 )
 
+
 user_dependency = Annotated[dict, Depends(get_current_user)]
 db_dependency = Annotated[Session, Depends(get_db)]
-
 
 @router.get("/investment", status_code=status.HTTP_200_OK)
 async def read_all(user: user_dependency, db: db_dependency):

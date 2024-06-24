@@ -23,7 +23,7 @@ async def get_data_last_month(
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
     # Calculate the start of last month in UTC
-    last_month_start = datetime.utcnow() - timedelta(days=30)
+    last_month_start = datetime.now() - timedelta(days=30)
 
     # Query for investments
     investment_data = db.query(
