@@ -66,7 +66,9 @@ async def create_divestment(
     divestment = Divestment(
         **request.model_dump(),
         owner_id=user.get("id"),
-        company=investment_model.company
+        company=investment_model.company,
+        net_return=request.quantity *
+        (request.unit_price - investment_model.unit_price)
     )
 
     # Update user and investment details
@@ -108,6 +110,9 @@ async def update_divestment(
         .first()
     )
 
+    investment = db.query(Investment).filter(Investment.id == divestment.investment_id,
+                                             Divestment.owner_id == user.get("id")).first()
+
     if divestment is None:
         raise HTTPException(status_code=404, detail="Divestment not found")
 
@@ -115,6 +120,8 @@ async def update_divestment(
     divestment.date_divested = divestment_request.date_divested
     divestment.unit_price = divestment_request.unit_price
     divestment.quantity = divestment_request.quantity
+    divestment.net_return = divestment_request.quantity * \
+        (divestment_request.unit_price - investment.unit_price)
 
     try:
         db.add(divestment)
