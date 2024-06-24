@@ -13,5 +13,5 @@ class UserCreateRequest(BaseModel):
     phone_number: str = Field(..., description="Phone number of the user")
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 

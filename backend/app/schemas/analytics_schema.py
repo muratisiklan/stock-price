@@ -16,9 +16,11 @@ class CompanyDetail(BaseModel):
                                    description="Total quantity invested in specific company")
     quantity_divested: int = Field(...,
                                    description="Total quantity divested in specific company")
+    net_return: float = Field(...,
+                              description="Total net return in last month by company")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "company_name": "Company A",
                 "num_investments": 2,
@@ -26,7 +28,8 @@ class CompanyDetail(BaseModel):
                 "total_invested": 10000.00,
                 "total_divested": 5000.00,
                 "quantity_invested": 10,
-                "quantity_divested": 10
+                "quantity_divested": 10,
+                "net_return": 100.25
             }
         }
 
@@ -44,11 +47,13 @@ class AnalyticsResponse(BaseModel):
         ..., description="Number of distinct companies invested in the last month")
     distinct_companies_divested: int = Field(
         ..., description="Number of distinct companies divested in the last month")
+    net_return: float = Field(...,
+                              description="Total net return in last month")
     investments_by_company: List[CompanyDetail] = Field(
         ..., description="Detailed information for each company")
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "num_investments": 5,
                 "distinct_companies_invested": 3,
@@ -56,6 +61,7 @@ class AnalyticsResponse(BaseModel):
                 "num_divestments": 2,
                 "distinct_companies_divested": 2,
                 "total_divested": 8000.75,
+                "net_return": 123.10,
                 "investments_by_company": [
                     {
                         "company_name": "Company A",
@@ -64,7 +70,9 @@ class AnalyticsResponse(BaseModel):
                         "total_invested": 10000.00,
                         "total_divested": 5000.00,
                         "quantity_invested": 10,
-                        "quantity_divested": 10
+                        "quantity_divested": 10,
+                        "net_return": 100.25
+
                     },
                     {
                         "company_name": "Company B",
@@ -73,7 +81,9 @@ class AnalyticsResponse(BaseModel):
                         "total_invested": 3000.50,
                         "total_divested": 1000.75,
                         "quantity_invested": 10,
-                        "quantity_divested": 10
+                        "quantity_divested": 10,
+                        "net_return": 100.25
+
                     },
                     {
                         "company_name": "Company C",
@@ -82,13 +92,15 @@ class AnalyticsResponse(BaseModel):
                         "total_invested": 2000.00,
                         "total_divested": 0.00,
                         "quantity_invested": 10,
-                        "quantity_divested": 10
+                        "quantity_divested": 10,
+                        "net_return": 100.25
+
                     }
                 ]
             }
         }
 
-        orm_mode = True
+        from_attributes = True
 
 
 # Total investments last month
