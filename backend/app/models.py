@@ -51,10 +51,16 @@ class Divestment(Base):
     date_divested = Column(DATE, nullable=False, server_default=text("now()"))
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    date_invested = Column(DATE)
     company = Column(String)
+
     unit_price = Column(Float)
     quantity = Column(Integer)
+
+    cost_of_investment = Column(Float)
+    revenue = Column(Float)
     net_return = Column(Float)
+
     
     investment_id = Column(Integer, ForeignKey("investments.id"))
     owner_id = Column(Integer, ForeignKey("users.id"))
