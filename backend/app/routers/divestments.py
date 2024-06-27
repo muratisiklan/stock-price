@@ -52,7 +52,7 @@ async def create_divestment(
 
     # Fetch the investment related to the divestment
     investment_model = db.query(Investment).filter(
-        Investment.id == request.investment_id).first()
+        Investment.id == request.investment_id, Investment.owner_id == user.get("id")).first()
 
     if investment_model is None:
         raise HTTPException(status_code=404, detail="Investment not found!")
@@ -67,8 +67,10 @@ async def create_divestment(
         **request.model_dump(),
         owner_id=user.get("id"),
         company=investment_model.company,
-        net_return=request.quantity *
-        (request.unit_price - investment_model.unit_price)
+        revenue = request.quantity * request.unit_price,
+        cost_of_investment = request.quantity * investment_model.unit_price,
+        net_return= request.quantity * (request.unit_price - investment_model.unit_price),
+        date_invested = investment_model.date_invested
     )
 
     # Update user and investment details
@@ -111,7 +113,7 @@ async def update_divestment(
     )
 
     investment = db.query(Investment).filter(Investment.id == divestment.investment_id,
-                                             Divestment.owner_id == user.get("id")).first()
+                                             Investment.owner_id == user.get("id")).first()
 
     if divestment is None:
         raise HTTPException(status_code=404, detail="Divestment not found")
@@ -120,6 +122,7 @@ async def update_divestment(
     divestment.date_divested = divestment_request.date_divested
     divestment.unit_price = divestment_request.unit_price
     divestment.quantity = divestment_request.quantity
+    divestment.revenue = divestment_request.quantity * divestment_request.unit_price
     divestment.net_return = divestment_request.quantity * \
         (divestment_request.unit_price - investment.unit_price)
 
