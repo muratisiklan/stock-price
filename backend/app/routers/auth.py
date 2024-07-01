@@ -72,8 +72,6 @@ async def create_user(db: db_dependency, user_request: UserCreateRequest):
         "first_name": user_request.first_name,
         "last_name": user_request.last_name,
         "hashed_password": bcrypt_context.hash(user_request.password),
-        "total_investment": 0,
-        "number_of_investments": 0,
         "phone_number": user_request.phone_number,
     }
     create_user_model = User(**user_data)
