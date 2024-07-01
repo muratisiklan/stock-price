@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session, aliased
 from datetime import datetime,date
 from sqlalchemy import func, distinct
 from dateutil.relativedelta import relativedelta
-
+from typing import Optional
 
 from ..database import get_db
 from ..models import User, Divestment, Investment
@@ -27,7 +27,7 @@ db_dependency = Depends(get_db)
 async def get_data_last_month(
     db: Session = db_dependency,
     user: dict = user_dependency,
-    last_month_start:date = Query()
+    last_month_start:Optional[date] = datetime.today().date()
 ):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")

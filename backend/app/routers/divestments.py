@@ -1,5 +1,6 @@
+from datetime import datetime
 from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException, Path,Query
 from sqlalchemy.orm import Session
 from starlette import status
 
@@ -45,14 +46,14 @@ async def read_divestment_by_id(
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_divestment(
-    user: user_dependency, db: db_dependency, request: DivestmentRequest,
+    user: user_dependency, db: db_dependency, request: DivestmentRequest,inv_id:int = Query()
 ):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
     # Fetch the investment related to the divestment
     investment_model = db.query(Investment).filter(
-        Investment.id == request.investment_id, Investment.owner_id == user.get("id")).first()
+        Investment.id == inv_id, Investment.owner_id == user.get("id")).first()
 
     if investment_model is None:
         raise HTTPException(status_code=404, detail="Investment not found!")
@@ -65,6 +66,7 @@ async def create_divestment(
     # Create the new divestment
     divestment = Divestment(
         **request.model_dump(),
+        investment_id = inv_id,
         owner_id=user.get("id"),
         company=investment_model.company,
         revenue = request.quantity * request.unit_price,
