@@ -10,7 +10,7 @@ from ..models import User, Divestment, Investment
 from ..schemas.analytics_schema import AnalyticsResponse, CompanyDetail
 from .auth import get_current_user
 
-# analytics calculations are based on transactions(both investment and divestment) made in specified date interval
+# Analytics calculations are based on transactions(both investment and divestment) made in specified date interval
 # if a divestment is included in specified interval; yet associated investment is before that date; such
 # divestment is not accounted while calculated analytics
 # ie: Analytics calculated for Investments(and associated divestments) made inside specified time interval
@@ -69,7 +69,8 @@ async def get_data_last_month(
         func.count(Investment.id).label("num_investments"),
         func.sum(Investment.quantity *
                  Investment.unit_price).label("total_invested"),
-        func.sum(Investment.quantity).label("quantity_invested")
+        func.sum(Investment.quantity).label("quantity_invested"),
+        func.sum(Investment.quantity_remaining).label("quantity_nonrealized_investment")
     ).filter(
         Investment.owner_id == user["id"],
         Investment.date_invested >= last_month_start
@@ -81,6 +82,8 @@ async def get_data_last_month(
         func.sum(Divestment.quantity *
                  Divestment.unit_price).label("total_divested"),
         func.sum(Divestment.quantity).label("quantity_divested"),
+        func.sum(Divestment.cost_of_investment).label("cost_of_realized_investment"),
+        func.sum(Divestment.revenue).label("revenue_from_realized_investment"),
         func.sum(Divestment.net_return).label("net_return")
     ).filter(
         Divestment.owner_id == user["id"],
@@ -97,9 +100,12 @@ async def get_data_last_month(
         investment_alias.c.num_investments,
         investment_alias.c.total_invested,
         investment_alias.c.quantity_invested,
+        investment_alias.c.quantity_nonrealized_investment,
         divestment_alias.c.num_divestments,
         divestment_alias.c.total_divested,
         divestment_alias.c.quantity_divested,
+        divestment_alias.c.cost_of_realized_investment,
+        divestment_alias.c.revenue_from_realized_investment,
         divestment_alias.c.net_return
     ).join(
         divestment_alias, investment_alias.c.company_name == divestment_alias.c.company_name, isouter=True
@@ -115,7 +121,10 @@ async def get_data_last_month(
             total_invested=row.total_invested or 0.0,
             total_divested=row.total_divested or 0.0,
             quantity_invested=row.quantity_invested or 0,
+            quantity_nonrealized_investment=row.quantity_nonrealized_investment or 0,
             quantity_divested=row.quantity_divested or 0,
+            cost_of_realized_investment= row.cost_of_realized_investment or 0,
+            revenue_from_realized_investment= row.revenue_from_realized_investment or 0,
             net_return=row.net_return or 0.0
         )
         company_details.append(company_detail)

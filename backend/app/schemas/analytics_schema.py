@@ -14,12 +14,22 @@ class CompanyDetail(BaseModel):
                                   description="Total amount invested in the company")
     total_divested: float = Field(...,
                                   description="Total amount divested from the company")
+
     quantity_invested: int = Field(...,
                                    description="Total quantity invested in specific company")
+    quantity_nonrealized_investment:int = Field(...,
+                                            description = "Total quantity invested yet not realized for each company")
     quantity_divested: int = Field(...,
                                    description="Total quantity divested in specific company")
+
+
+
+    cost_of_realized_investment: float = Field(...,
+                                        description = "Total cost of realized investments per company")
+    revenue_from_realized_investment:float= Field(...,
+                                              description="Total revenue gained(realized) by divestments for each company")
     net_return: float = Field(...,
-                              description="Total net return in last month by company")
+                              description="Total net return in last month by each company")
 
     # class Config:
     #     json_schema_extra = {
@@ -100,30 +110,39 @@ class AnalyticsResponse(BaseModel):
                         "total_invested": 10000.00,
                         "total_divested": 5000.00,
                         "quantity_invested": 10,
+                        "quantity_nonrealized_investment": 10,
                         "quantity_divested": 10,
-                        "net_return": 100.25
+                        "cost_of_realized_investment": 150.00,
+                        "revenue_from_realized_investment": 250.00,
+                        "net_return": 100.00
 
                     },
                     {
                         "company_name": "Company B",
-                        "num_investments": 1,
+                        "num_investments": 2,
                         "num_divestments": 1,
-                        "total_invested": 3000.50,
-                        "total_divested": 1000.75,
+                        "total_invested": 10000.00,
+                        "total_divested": 5000.00,
                         "quantity_invested": 10,
+                        "quantity_nonrealized_investment": 10,
                         "quantity_divested": 10,
-                        "net_return": 100.25
-
+                        "cost_of_realized_investment": 150.00,
+                        "revenue_from_realized_investment": 250.00,
+                        "net_return": 100.00
                     },
                     {
                         "company_name": "Company C",
                         "num_investments": 2,
-                        "num_divestments": 0,
-                        "total_invested": 2000.00,
-                        "total_divested": 0.00,
+                        "num_divestments": 1,
+                        "total_invested": 10000.00,
+                        "total_divested": 5000.00,
                         "quantity_invested": 10,
+                        "quantity_nonrealized_investment": 10,
                         "quantity_divested": 10,
-                        "net_return": 100.25
+                        "cost_of_realized_investment": 150.00,
+                        "revenue_from_realized_investment": 250.00,
+                        "net_return": 100.00
+
 
                     }
                 ]
