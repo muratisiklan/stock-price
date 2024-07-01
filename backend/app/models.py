@@ -26,7 +26,7 @@ class User(Base):
     number_of_divestments = Column(Integer, nullable=False, default=0)
     total_divestment = Column(Integer, nullable=False, default=0)
 
-    # is_premium = Column(Boolean,nullable=False,default = False)
+    is_premium = Column(Boolean,nullable=False,default = False)
 
 
 class Investment(Base):
