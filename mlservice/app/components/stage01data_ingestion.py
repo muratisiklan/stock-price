@@ -1,8 +1,9 @@
 import os.path as path
 import pandas as pd
 import sys
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from typing import List
 from ..exception import CustomException
 from ..logger import logging
 from ..utils import get_data_from_yfinance
@@ -16,22 +17,29 @@ class StockIngestionConfig:
     It reads the symbols from a CSV file and stores them in a list.
     """
     path_to_file: str = path.abspath(
-        path.join(__file__, "../../artifacts/base_data/bist_data.csv"))
+        path.join(__file__, "../../../artifacts/base_data/bist_data.csv"))
+    # Use init=False to exclude from __init__
+    symbols_list: List[str] = field(init=False)
 
-    try:
-        # Read the symbols list from the CSV file
-        symbols_list: list = list(pd.read_csv(path_to_file)["Symbol"])
-        if not symbols_list:
-            raise ValueError("Symbols list is empty.")
-    except FileNotFoundError as e:
-        logging.error(f"File not found: {e}")
-        raise CustomException(f"File not found: {e}", sys)
-    except pd.errors.EmptyDataError as e:
-        logging.error(f"Empty data error: {e}")
-        raise CustomException(f"Empty data error: {e}", sys)
-    except Exception as e:
-        logging.error(f"Error reading symbols list: {e}")
-        raise CustomException(f"Error reading symbols list: {e}", sys)
+    def __post_init__(self):
+        """
+        Post-initialization to read the symbols list from the CSV file.
+        This ensures symbols_list is populated after the object is created.
+        """
+        try:
+            # Read the symbols list from the CSV file
+            self.symbols_list = list(pd.read_csv(self.path_to_file)["Symbol"])
+            if not self.symbols_list:
+                raise ValueError("Symbols list is empty.")
+        except FileNotFoundError as e:
+            logging.error(f"File not found: {e}")
+            raise CustomException(f"File not found: {e}", sys)
+        except pd.errors.EmptyDataError as e:
+            logging.error(f"Empty data error: {e}")
+            raise CustomException(f"Empty data error: {e}", sys)
+        except Exception as e:
+            logging.error(f"Error reading symbols list: {e}")
+            raise CustomException(f"Error reading symbols list: {e}", sys)
 
 
 class StockIngestion:
@@ -111,14 +119,3 @@ class StockIngestion:
         finally:
             client.close()
             logging.info("MongoDB client closed.")
-
-
-# Example usage
-if __name__ == "__main__":
-    try:
-        stock_ingestion = StockIngestion()
-        stock_ingestion.initiate_stock_ingestion()
-    except CustomException as e:
-        logging.error(f"Failed to ingest stock data: {e}")
-    except Exception as e:
-        logging.error(f"Unexpected error: {e}")
