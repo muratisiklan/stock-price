@@ -8,8 +8,6 @@ from ..exception import CustomException
 from ..logger import logging
 from ..utils import get_data_from_yfinance
 from ..database import client
-
-
 @dataclass
 class StockIngestionConfig:
     """
@@ -105,17 +103,16 @@ class StockIngestion:
         """
         Initiates the data ingestion process for all stock symbols.
         """
+
         stock_db = client.stockdata
         try:
             for symbol in self.ingestion_config.symbols_list:
                 logging.info(f"Starting data ingestion for symbol: {symbol}")
                 collection = stock_db[symbol]
                 self.ingest_data_for_symbol(symbol, collection)
-        except CustomException as e:
-            logging.error(f"Custom Exception during ingestion: {e}")
+      
         except Exception as e:
             logging.error(f"Unexpected error during ingestion: {e}")
             raise CustomException(e, sys)
         finally:
-            client.close()
             logging.info("MongoDB client closed.")
