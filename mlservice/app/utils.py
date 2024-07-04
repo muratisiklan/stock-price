@@ -64,22 +64,41 @@ def get_historical_data(mongo_uri: str, symbol: str, last_n: int) -> pd.DataFram
 
 
 def is_up_to_date(mongo_uri: str) -> bool:
+    """returns true if db is up to date
+    returns false if db is not up to date
+    
 
-    with MongoClient(mongo_uri) as client:
-        static_symbol = "ASELS.IS"
-        db = client.stockdata
-        collection = db[static_symbol]
-        cursor = collection.find().sort("_id", -1).limit(1)
-        data = list(cursor)
+    Args:
+        mongo_uri (str): _description_
 
-        entry_date = data[0]["_id"]
-        hour_now = datetime.now().time()
-        today = datetime.today()
-        yesterday = today - timedelta(days=1)
+    Raises:
+        CustomException: _description_
 
-        # saat 18.15 ile 23.59 arasındaysa son entry bugünün tarihi olacak
-        if hour_now > dt.time(18, 15) and hour_now < dt.time(0, 0):
-            return entry_date == today.strftime("%Y-%m-%d")
-        # saat 00.00 ile 18.14 arasındaysa son entry dünün tarihi olacak
-        else:
-            return entry_date == yesterday.strftime("%Y-%m-%d")
+    Returns:
+        bool: _description_
+    """
+
+    try:
+
+        with MongoClient(mongo_uri) as client:
+            static_symbol = "ASELS.IS"
+            db = client.stockdata
+            collection = db[static_symbol]
+            cursor = collection.find().sort("_id", -1).limit(1)
+            data = list(cursor)
+
+            entry_date = data[0]["_id"]
+            hour_now = datetime.now().time()
+            today = datetime.today()
+            yesterday = today - timedelta(days=1)
+
+            # saat 18.15 ile 23.59 arasındaysa son entry bugünün tarihi olacak
+            if hour_now > dt.time(18, 15) and hour_now < dt.time(0, 0):
+                return entry_date == today.strftime("%Y-%m-%d")
+            # saat 00.00 ile 18.14 arasındaysa son entry dünün tarihi olacak
+            else:
+                return entry_date == yesterday.strftime("%Y-%m-%d")
+    except Exception as e:
+        raise CustomException(e, sys)
+    finally:
+        client.close()
