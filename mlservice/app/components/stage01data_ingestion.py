@@ -1,13 +1,15 @@
-import os.path as path
+from pymongo import MongoClient
 import pandas as pd
-import sys
-from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from typing import List
 from ..exception import CustomException
 from ..logger import logging
 from ..utils import get_data_from_yfinance
-from ..database import client
+from dataclasses import dataclass, field
+from typing import List
+import os.path as path
+import sys
+
+
 @dataclass
 class StockIngestionConfig:
     """
@@ -45,7 +47,10 @@ class StockIngestion:
     Class responsible for the ingestion of stock data.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, mongo_uri:str):
+        self.mongo_uri = mongo_uri
+        self.client = MongoClient(self.mongo_uri)
+        self.stock_db = self.client.stockdata
         self.ingestion_config = StockIngestionConfig()
 
     def get_date_range(self, collection):
@@ -99,20 +104,20 @@ class StockIngestion:
             logging.error(f"Error ingesting data for symbol {symbol}: {e}")
             raise CustomException(e, sys)
 
-    def initiate_stock_ingestion(self) -> None:
+    def initiate_stock_ingestion(self):
         """
         Initiates the data ingestion process for all stock symbols.
         """
-
-        stock_db = client.stockdata
         try:
             for symbol in self.ingestion_config.symbols_list:
                 logging.info(f"Starting data ingestion for symbol: {symbol}")
-                collection = stock_db[symbol]
+                collection = self.stock_db[symbol]
                 self.ingest_data_for_symbol(symbol, collection)
-      
+
         except Exception as e:
             logging.error(f"Unexpected error during ingestion: {e}")
             raise CustomException(e, sys)
         finally:
+            self.client.close()
             logging.info("MongoDB client closed.")
+

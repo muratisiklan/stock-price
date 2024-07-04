@@ -2,10 +2,10 @@ from ..utils import get_historical_data
 import os.path as path
 import pandas as pd
 import numpy as np
-from ..database import client
 from ..exception import CustomException
 from ..logger import logging
 import sys
+from ..database import mongo_uri
 
 # Path to the CSV file containing the list of stock symbols
 path_to_file: str = path.abspath(
@@ -15,7 +15,7 @@ path_to_file: str = path.abspath(
 symbols_list = list(pd.read_csv(path_to_file)["Symbol"])
 
 
-async def calculate_company_metrics(last_n_days: int) -> dict:
+def calculate_company_metrics(last_n_days: int) -> dict:
     """
     Calculate various metrics for each company's stock based on historical data.
 
@@ -30,7 +30,7 @@ async def calculate_company_metrics(last_n_days: int) -> dict:
     try:
         for symbol in symbols_list:
             # Fetch historical data for the last 'last_n_days' days
-            df = await get_historical_data(client, symbol, last_n_days)
+            df = get_historical_data(mongo_uri, symbol, last_n_days)
 
             if df.empty:
                 logging.warning(f"No data found for {symbol}. Skipping...")

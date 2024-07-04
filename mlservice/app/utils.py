@@ -1,10 +1,11 @@
 import pandas as pd
 import yfinance as yf
 from datetime import datetime
-from motor.motor_asyncio import AsyncIOMotorClient
 from .logger import logging
 from .exception import CustomException
 import sys
+from pymongo import MongoClient
+
 
 def get_data_from_yfinance(symbol: str, start_date: str, end_date: str):
     # Includes start, excludes end date
@@ -23,38 +24,39 @@ def get_data_from_yfinance(symbol: str, start_date: str, end_date: str):
             f"Error fetching data for {symbol} from {start_date} to {end_date}: {e}")
 
 
-async def get_historical_data(client: AsyncIOMotorClient, symbol: str, last_n: int) -> pd.DataFrame:
+def get_historical_data(mongo_uri: str, symbol: str, last_n: int) -> pd.DataFrame:
     """
     Retrieves historical data for a specific stock symbol from MongoDB.
 
     Args:
-        client (AsyncIOMotorClient): Async MongoDB client instance.
+        mongo_uri (str): MongoDB connection URI.
         symbol (str): Stock symbol (ticker) to retrieve data for.
         last_n (int): Number of days of historical data to retrieve.
 
     Returns:
         pd.DataFrame: DataFrame containing the historical data for the specified symbol.
     """
-    try:
-        # Connect to MongoDB
-        db = client.stockdata
-        collection = db[symbol]
+    with MongoClient(mongo_uri) as client:
+        try:
+            # Connect to MongoDB and select the collection
+            db = client.stockdata
+            collection = db[symbol]
 
-        # Retrieve the last N documents for the given symbol
-        cursor = collection.find().sort("_id", -1).limit(last_n)
+            # Retrieve the last N documents for the given symbol
+            cursor = collection.find().sort("_id", -1).limit(last_n)
 
-        # Convert cursor to list of documents
-        data_list = await cursor.to_list(length=last_n)
+            # Convert cursor to list of documents
+            data_list = list(cursor)
 
-        # Convert the selected documents into a DataFrame
-        df = pd.DataFrame(data_list)
+            # Convert the selected documents into a DataFrame
+            df = pd.DataFrame(data_list)
 
-        return df
+            return df
 
-    except Exception as e:
-        logging.error(f"Error retrieving historical data for {symbol}: {e}")
-        raise CustomException(
-            f"Error retrieving historical data for {symbol}: {e}",sys)
-
-
-
+        except Exception as e:
+            logging.error(
+                f"Error retrieving historical data for {symbol}: {e}")
+            raise CustomException(
+                f"Error retrieving historical data for {symbol}: {e}", sys)
+        finally:
+            client.close()
