@@ -14,7 +14,7 @@ path_to_file: str = path.abspath(
 # Read the symbols from the CSV file
 symbols_list = list(pd.read_csv(path_to_file)["Symbol"])
 
-
+#TODO: Metric calculations should be updated correctly some of them can be eliminated
 def calculate_company_metrics(last_n_days: int) -> dict:
     """
     Calculate various metrics for each company's stock based on historical data.
