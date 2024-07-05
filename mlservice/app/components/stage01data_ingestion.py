@@ -108,6 +108,7 @@ class StockIngestion:
         """
         Initiates the data ingestion process for all stock symbols.
         """
+        # If time is not between 18.15 and 18.20 cant initiate stock ingestion
         try:
             for symbol in self.ingestion_config.symbols_list:
                 logging.info(f"Starting data ingestion for symbol: {symbol}")

@@ -66,21 +66,24 @@ def get_historical_data(mongo_uri: str, symbol: str, last_n: int) -> pd.DataFram
 def is_up_to_date(mongo_uri: str) -> bool:
     """returns true if db is up to date
     returns false if db is not up to date
-    
+
 
     Args:
-        mongo_uri (str): _description_
+        mongo_uri (str): mongo connetion string
 
     Raises:
         CustomException: _description_
 
     Returns:
-        bool: _description_
+        bool: true if db is up to date false otherwise
     """
 
     try:
+        # If database not exist or empty return false
 
         with MongoClient(mongo_uri) as client:
+            if "stockdata" not in client.list_database_names():
+                return False
             static_symbol = "ASELS.IS"
             db = client.stockdata
             collection = db[static_symbol]
