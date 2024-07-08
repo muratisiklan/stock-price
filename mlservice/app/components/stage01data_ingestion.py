@@ -1,9 +1,9 @@
 from pymongo import MongoClient
 import pandas as pd
 from datetime import datetime, timedelta
-from ..exception import CustomException
-from ..logger import logging
-from ..utils import get_data_from_yfinance
+from ..utils.exception import CustomException
+from ..utils.logger import logging
+from ..utils.utils import get_data_from_yfinance
 from dataclasses import dataclass, field
 from typing import List
 import os.path as path

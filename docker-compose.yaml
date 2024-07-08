@@ -9,11 +9,17 @@ services:
     depends_on:
       - postgres
   postgres:
-    image: postgres
+    image: postgres:latest
     env_file:
       - ./.env.postgres
-#     volumes:
-#       - postgres-db:/var/lib/postgresql/data
-# volumes:
-#   postgres-db:
+  mlservice:
+    build: ./mlservice
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongo
+    env_file:
+      - ./.env.mlservice
+  mongo:
+    image: mongo:latest
 

@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pymongo
+pandas
+yfinance
+pydantic
+pydantic_core
+pydantic-settings

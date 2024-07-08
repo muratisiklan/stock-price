@@ -1,9 +1,9 @@
-from ..utils import get_historical_data
+from ..utils.utils import get_historical_data
 import os.path as path
 import pandas as pd
 import numpy as np
-from ..exception import CustomException
-from ..logger import logging
+from ..utils.exception import CustomException
+from ..utils.logger import logging
 import sys
 
 
@@ -45,7 +45,7 @@ class CompanyMetrics():
 
             daily_returns = closing_prices.pct_change(
                 fill_method="ffill").dropna()
-            # volatility = daily_returns.std() * np.sqrt(len(closing_prices))
+            volatility = daily_returns.std() * np.sqrt(len(closing_prices))
 
             delta = closing_prices.diff()
             gain = delta.where(delta > 0, 0)
@@ -72,12 +72,13 @@ class CompanyMetrics():
             # Store the metrics in the dictionary
             metrics_dict = {
                 'Symbol': symbol,
+                "Start From": start_date,
                 'Max Value': max_value,
                 'Min Value': min_value,
                 'Standard Deviation': std_dev,
                 'Price Interval': price_interval,
                 'Percentage Change': percentage_change,
-                # 'Volatility': volatility,
+                'Volatility': volatility,
                 'RSI': rsi,
                 'Bollinger Upper Band': latest_upper_band,
                 'Bollinger Lower Band': latest_lower_band,
