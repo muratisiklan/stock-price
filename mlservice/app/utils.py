@@ -25,7 +25,7 @@ def get_data_from_yfinance(symbol: str, start_date: str, end_date: str):
             f"Error fetching data for {symbol} from {start_date} to {end_date}: {e}")
 
 
-def get_historical_data(mongo_uri: str, symbol: str, last_n: int) -> pd.DataFrame:
+def get_historical_data(mongo_uri: str, symbol: str, start_date: str) -> pd.DataFrame:
     """
     Retrieves historical data for a specific stock symbol from MongoDB.
 
@@ -42,9 +42,10 @@ def get_historical_data(mongo_uri: str, symbol: str, last_n: int) -> pd.DataFram
             # Connect to MongoDB and select the collection
             db = client.stockdata
             collection = db[symbol]
+            query = {"_id": {"$gte": start_date}}
 
             # Retrieve the last N documents for the given symbol
-            cursor = collection.find().sort("_id", -1).limit(last_n)
+            cursor = collection.find(query).sort("_id", -1)
 
             # Convert cursor to list of documents
             data_list = list(cursor)

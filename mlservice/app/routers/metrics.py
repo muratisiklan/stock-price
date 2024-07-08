@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from datetime import datetime, date
-from dateutil.relativedelta import relativedelta
 from typing import Optional
-from ..components.stage02get_data import get_historical_data
+from ..components.stage02get_data import CompanyMetrics
+from ..database import mongo_uri
 
 # Analytics calculations are based on transactions(both investment and divestment) made in specified date interval
 # if a divestment is included in specified interval; yet associated investment is before that date; such
@@ -13,15 +13,36 @@ from ..components.stage02get_data import get_historical_data
 router = APIRouter(prefix="/metrics", tags=["metrics"])
 
 
-
 @router.get("/",  status_code=status.HTTP_200_OK)
-async def get_data_last_month(
-    last_month_start: Optional[date] = datetime.today().date()
+async def get_company_metrics(
+    symbol: str = Query(default="ASELS.IS",
+                        description="Stock symbol of the company"),
+    start_date: Optional[str] = Query(datetime.today().strftime("%Y-%m-%d"),
+                                      lt=datetime.today().strftime("%Y-%m-%d"),
+                                      description="Stock symbol of the company"),
 ):
-    today = datetime.today().date()
-    
-    
-    response = None
 
+    # if start_date >= datetime.today().strftime("%Y-%m-%d"):
+    #     raise HTTPException(
+    #         status_code=status.HTTP_400_BAD_REQUEST,
+    #         detail="Start date cannot be in the future."
+    #     )
 
-    return response
+    # Initialize the CompanyMetrics instance
+    cm = CompanyMetrics(mongo_uri)
+
+    # Attempt to calculate the company metrics
+    try:
+        metrics = cm.calculate_company_metrics(symbol, start_date)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="An error occurred while calculating metrics."
+        )
+
+    return metrics

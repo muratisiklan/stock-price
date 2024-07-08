@@ -6,15 +6,17 @@ from datetime import datetime
 
 
 class SaveCompanyMetrics():
-    """rResponsible for saving company metrics data daily to mongo db
-    at collection name "metrics"
+
+    """Will not be used for now ------- !!!!!!!
+
+    Raises:
+        CustomException: _description_
     """
 
     def __init__(self) -> None:
         self.collection_name = "metrics"
 
     def db_save_metrics(self, mongo_uri: str, data: dict) -> None:
-
         """Saves metrics to mongo db data base with specified mongo uri and given data
 
         Raises:
