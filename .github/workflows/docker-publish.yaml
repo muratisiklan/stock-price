@@ -1,0 +1,42 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    paths:
+      - backend/**
+      - mlservice/**
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build and push backend image
+        if: contains(github.event.head_commit.message, 'backend') || contains(github.event.head_commit.message, 'mlservice')
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/backend:latest
+
+      - name: Build and push mlservice image
+        if: contains(github.event.head_commit.message, 'mlservice') || contains(github.event.head_commit.message, 'backend')
+        uses: docker/build-push-action@v5
+        with:
+          context: ./mlservice
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/mlservice:latest
