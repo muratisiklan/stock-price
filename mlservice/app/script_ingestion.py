@@ -17,15 +17,15 @@ if not is_up_to_date(mongo_uri):
         raise CustomException(e, sys)
 
 
-try:
-    comp_metrics = CompanyMetrics(mongo_uri)
-    metrics = comp_metrics.calculate_company_metrics(
-        comp_filter, start_date)
-    # data = metrics[comp_filter]
+# try:
+#     comp_metrics = CompanyMetrics(mongo_uri)
+#     metrics = comp_metrics.calculate_company_metrics(
+#         comp_filter, start_date)
+#     # data = metrics[comp_filter]
 
-    print(f"Metrics for {comp_filter}:")
-    for key, value in metrics.items():
-        print(f" {key} : {value}")
-        print()
-except Exception as e:
-    raise CustomException(e, sys)
+#     print(f"Metrics for {comp_filter}:")
+#     for key, value in metrics.items():
+#         print(f" {key} : {value}")
+#         print()
+# except Exception as e:
+#     raise CustomException(e, sys)

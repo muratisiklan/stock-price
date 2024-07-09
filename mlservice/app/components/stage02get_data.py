@@ -73,16 +73,16 @@ class CompanyMetrics():
             metrics_dict = {
                 'Symbol': symbol,
                 "Start From": start_date,
-                'Max Value': max_value,
-                'Min Value': min_value,
-                'Standard Deviation': std_dev,
-                'Price Interval': price_interval,
-                'Percentage Change': percentage_change,
-                'Volatility': volatility,
-                'RSI': rsi,
-                'Bollinger Upper Band': latest_upper_band,
-                'Bollinger Lower Band': latest_lower_band,
-                'Sharpe Ratio': sharpe_ratio
+                'Max Value': round(max_value, 3),
+                'Min Value': round(min_value, 3),
+                'Standard Deviation': round(std_dev, 3),
+                'Price Interval': round(price_interval, 3),
+                'Percentage Change': round(percentage_change, 3),
+                'Volatility': round(volatility, 3),
+                'RSI': round(rsi, 3),
+                'Bollinger Upper Band': round(latest_upper_band, 3),
+                'Bollinger Lower Band': round(latest_lower_band, 3),
+                'Sharpe Ratio': round(sharpe_ratio, 3)
             }
 
         except Exception as e:

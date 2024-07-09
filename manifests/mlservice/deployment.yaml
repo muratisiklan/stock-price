@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mlservice
+  template:
+    metadata:
+      labels:
+        app: mlservice
+    spec:
+      containers:
+      - name: mlservice
+        image: mlservice:latest
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: mlservice-config

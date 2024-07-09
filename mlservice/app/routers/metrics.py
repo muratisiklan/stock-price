@@ -3,6 +3,7 @@ from datetime import datetime, date
 from typing import Optional
 from ..components.stage02get_data import CompanyMetrics
 from ..database import mongo_uri
+from ..utils.utils import sanitize_for_json
 
 # Analytics calculations are based on transactions(both investment and divestment) made in specified date interval
 # if a divestment is included in specified interval; yet associated investment is before that date; such
@@ -44,5 +45,7 @@ async def get_company_metrics(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="An error occurred while calculating metrics."
         )
+    response = sanitize_for_json(metrics)
 
-    return metrics
+    return response
+

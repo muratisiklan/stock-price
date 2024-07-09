@@ -6,6 +6,7 @@ from .logger import logging
 from .exception import CustomException
 import sys
 from pymongo import MongoClient
+import numpy as np
 
 
 def get_data_from_yfinance(symbol: str, start_date: str, end_date: str):
@@ -32,7 +33,7 @@ def get_historical_data(mongo_uri: str, symbol: str, start_date: str) -> pd.Data
     Args:
         mongo_uri (str): MongoDB connection URI.
         symbol (str): Stock symbol (ticker) to retrieve data for.
-        last_n (int): Number of days of historical data to retrieve.
+        start_date (str): Data to be retrieved from date
 
     Returns:
         pd.DataFrame: DataFrame containing the historical data for the specified symbol.
@@ -106,3 +107,17 @@ def is_up_to_date(mongo_uri: str) -> bool:
         raise CustomException(e, sys)
     finally:
         client.close()
+
+
+def sanitize_for_json(data):
+    if isinstance(data, dict):
+        return {k: sanitize_for_json(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [sanitize_for_json(i) for i in data]
+    elif isinstance(data, float):
+        if np.isfinite(data):
+            return data
+        else:
+            return None  # or a default value
+    else:
+        return data

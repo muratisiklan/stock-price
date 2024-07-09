@@ -10,6 +10,10 @@ class SettingsApi(BaseSettings):
     secret_key: str
     algorithm: str
     access_token_expire_minutes: int
+    
+    
+    app_host: str
+    app_port: int
 
     # class Config:
     #     env_file = ".env.backend"
