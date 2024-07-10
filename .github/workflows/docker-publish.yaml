@@ -10,7 +10,7 @@ on:
 
 jobs:
   build-and-push-backend:
-    if: ${{ contains(github.event.head_commit.modified, 'backend/') }}
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.message != '' || github.event.head_commit.added || github.event.head_commit.modified || github.event.head_commit.deleted) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -33,7 +33,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/backend:latest
 
   build-and-push-mlservice:
-    if: ${{ contains(github.event.head_commit.modified, 'mlservice/') }}
+    if: ${{ github.event_name == 'push' && (github.event.head_commit.message != '' || github.event.head_commit.added || github.event.head_commit.modified || github.event.head_commit.deleted) }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
