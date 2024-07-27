@@ -1,6 +1,6 @@
 FROM python:3.10-slim-bullseye
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/
 
 COPY ./requirements.txt ./
 

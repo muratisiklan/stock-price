@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: mlservice-config
-data:
-  $(cat .env.mlservice | sed '/^$/d' | sed 's/^/  /')

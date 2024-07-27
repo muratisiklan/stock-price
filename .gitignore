@@ -4,4 +4,5 @@ __pycache__
 logs
 experiments/
 .env.*
+secret.yaml
 #/frontend
