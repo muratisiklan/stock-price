@@ -1,12 +1,14 @@
 services:
   backend:
-    image: muratisiklan/backend:latest
+#    image: muratisiklan/backend:latest
+    build: ./backend
     ports:
       - 8000:8000
     env_file:
       - ./.env.backend
     depends_on:
       - postgres
+      - mlservice
   postgres:
     image: postgres:latest
     env_file:
@@ -14,7 +16,8 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
   mlservice:
-    image: muratisiklan/mlservice:latest
+#    image: muratisiklan/mlservice:latest
+    build: ./mlservice
     ports:
       - 8080:8080
     depends_on:

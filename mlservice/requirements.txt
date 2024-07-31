@@ -6,3 +6,4 @@ yfinance
 pydantic
 pydantic_core
 pydantic-settings
+matplotlib

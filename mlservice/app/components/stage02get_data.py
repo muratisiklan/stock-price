@@ -16,7 +16,7 @@ class CompanyMetrics():
 
     # TODO: Metric calculations should be updated correctly some of them can be eliminated
 
-    def calculate_company_metrics(self, symbol: str, start_date: str, data: bool = False) -> dict:
+    def calculate_company_metrics(self, symbol: str, start_date: str, return_data: bool = False) -> dict:
         """
         Calculate various metrics for each company's stock based on historical data.
 
@@ -88,7 +88,7 @@ class CompanyMetrics():
         except Exception as e:
             logging.error(f"Error processing {symbol}: {e}")
             raise CustomException(f"Error processing {symbol}: {e}", sys)
-        if data == True:
-            return closing_prices
+        if return_data == True:
+            return df
         else:
             return metrics_dict

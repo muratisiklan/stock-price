@@ -1,21 +1,19 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
-from datetime import datetime, date
+from datetime import datetime
 from typing import Optional
 from ..components.stage02get_data import CompanyMetrics
 from ..database import mongo_uri
-from ..utils.utils import sanitize_for_json
 from fastapi.responses import StreamingResponse
+import matplotlib.pyplot as plt
+import pandas as pd
+import io
 
-# Analytics calculations are based on transactions(both investment and divestment) made in specified date interval
-# if a divestment is included in specified interval; yet associated investment is before that date; such
-# divestment is not accounted while calculated analytics
-# ie: Analytics calculated for Investments(and associated divestments) made inside specified time interval
+# This API is responsible for returning a chart related to customer's company shares for a period of time.
+
+router = APIRouter(prefix="/charts", tags=["charts"])
 
 
-router = APIRouter(prefix="/chart", tags=["chart"])
-
-
-@router.get("/",  status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_200_OK)
 async def get_company_charts(
     symbol: str = Query(default="ASELS.IS",
                         description="Stock symbol of the company"),
@@ -24,17 +22,13 @@ async def get_company_charts(
                                       description="Stock symbol of the company"),
 ):
 
-    # figure = company_data
-    # figure.savefig("tofile.png")
-    # file = open("file.png",mode="rb")
-    # response = StreamingResponse(file,media_type="image/png")
-
     # Initialize the CompanyMetrics instance
     cm = CompanyMetrics(mongo_uri)
 
     # Attempt to calculate the company metrics
     try:
-        data = cm.calculate_company_metrics(symbol, start_date,data=True)
+        data = cm.calculate_company_metrics(
+            symbol, start_date, return_data=True)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -46,7 +40,22 @@ async def get_company_charts(
             detail="An error occurred while calculating data."
         )
 
-    print(data)
+    data['_id'] = pd.to_datetime(data['_id'])
 
+    # Plotting the data
+    plt.figure(figsize=(10, 5))
+    plt.plot(data['_id'], data['Close'], marker='o')
+    plt.title(f'Closing Prices Since {start_date} for Company {symbol}')
+    plt.xlabel('Date')
+    plt.ylabel('Closing Price')
+    plt.xticks(rotation=45)
+    plt.grid(True)
+    plt.tight_layout()
 
-    return {"response": "hello world"}
+    # Save the plot to a bytes buffer
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    plt.close()
+
+    return StreamingResponse(buf, media_type="image/png")

@@ -149,11 +149,31 @@ async def get_data_last_month(
         net_return=divestment_data.net_return or 0.0,
         investments_by_company=company_details
     )
+
+
+
+    #TODO: Calculate unique invested companies where investments are active
+    # for user as list
+
+   # Execute the query
+    comp_query = db.query(distinct(Investment.company)).filter(
+        Investment.is_active == True,
+        Investment.owner_id == user.get("id"),
+        Investment.date_invested >= last_month_start
+    ).all()
+
+    companies = [company[0] for company in comp_query]
+
+
     url = 'http://stock-price-mlservice-1:8080/metrics/'  # Use the service name
     params = {
         'symbol': 'ASELS.IS',
         'start_date': '2024-01-01'
     }
+
+
+    # For each unique company current user holds send request to 
+    #ml-service-1 respective endpoint and fetch data related with each company
 
     try:
         res = requests.get(url, params=params)
