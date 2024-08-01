@@ -15,6 +15,7 @@ class SettingsApi(BaseSettings):
     app_host: str
     app_port: int
 
+    ml_svc_url: str
     # class Config:
     #     env_file = ".env.backend"
 

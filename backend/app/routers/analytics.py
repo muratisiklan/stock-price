@@ -9,6 +9,7 @@ from ..database import get_db
 from ..models import User, Divestment, Investment
 from ..schemas.analytics_schema import AnalyticsResponse, CompanyDetail
 from .auth import get_current_user
+from ..config import settings_api
 
 import requests
 # Analytics calculations are based on transactions(both investment and divestment) made in specified date interval
@@ -150,9 +151,7 @@ async def get_data_last_month(
         investments_by_company=company_details
     )
 
-
-
-    #TODO: Calculate unique invested companies where investments are active
+    # TODO: Calculate unique invested companies where investments are active
     # for user as list
 
    # Execute the query
@@ -164,26 +163,24 @@ async def get_data_last_month(
 
     companies = [company[0] for company in comp_query]
 
+    company_analytics = {}
 
-    url = 'http://stock-price-mlservice-1:8080/metrics/'  # Use the service name
-    params = {
-        'symbol': 'ASELS.IS',
-        'start_date': '2024-01-01'
-    }
+    for symbol in companies:
+        url = f'{settings_api.ml_svc_url}metrics/'  # Use the service name
+        params = {
+            'symbol': symbol,
+            'start_date': last_month_start,
+        }
 
+        try:
+            res = requests.get(url, params=params)
+            res.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
 
-    # For each unique company current user holds send request to 
-    #ml-service-1 respective endpoint and fetch data related with each company
+            # Process the response
+            data = res.json()  # Assuming the response is JSON
+            company_analytics[symbol] = data
 
-    try:
-        res = requests.get(url, params=params)
-        res.raise_for_status()  # Raise an exception for HTTP errors (4xx or 5xx)
-
-        # Process the response
-        data = res.json()  # Assuming the response is JSON
-        print(data)
-
-    except requests.exceptions.RequestException as e:
-        print(f"Error sending request: {e}")
+        except requests.exceptions.RequestException as e:
+            print(f"Error sending request: {e}")
 
     return response
