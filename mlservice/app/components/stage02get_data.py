@@ -71,18 +71,18 @@ class CompanyMetrics():
 
             # Store the metrics in the dictionary
             metrics_dict = {
-                'Symbol': symbol,
-                "Start From": start_date,
-                'Max Value': round(max_value, 3),
-                'Min Value': round(min_value, 3),
-                'Standard Deviation': round(std_dev, 3),
-                'Price Interval': round(price_interval, 3),
-                'Percentage Change': round(percentage_change, 3),
-                'Volatility': round(volatility, 3),
-                'RSI': round(rsi, 3),
-                'Bollinger Upper Band': round(latest_upper_band, 3),
-                'Bollinger Lower Band': round(latest_lower_band, 3),
-                'Sharpe Ratio': round(sharpe_ratio, 3)
+                'symbol': symbol,
+                "from_date": start_date,
+                'max_value': round(max_value, 3),
+                'min_value': round(min_value, 3),
+                'standard_deviation': round(std_dev, 3),
+                'price_interval': round(price_interval, 3),
+                'percentage_change': round(percentage_change, 3),
+                'volatility': round(volatility, 3),
+                'rsi': round(rsi, 3),
+                'bollinger_up': round(latest_upper_band, 3),
+                'bollinger_low': round(latest_lower_band, 3),
+                'sharpe_ratio': round(sharpe_ratio, 3)
             }
 
         except Exception as e:
