@@ -17,17 +17,15 @@ class CompanyDetail(BaseModel):
 
     quantity_invested: int = Field(...,
                                    description="Total quantity invested in specific company")
-    quantity_nonrealized_investment:int = Field(...,
-                                            description = "Total quantity invested yet not realized for each company")
+    quantity_nonrealized_investment: int = Field(...,
+                                                 description="Total quantity invested yet not realized for each company")
     quantity_divested: int = Field(...,
                                    description="Total quantity divested in specific company")
 
-
-
     cost_of_realized_investment: float = Field(...,
-                                        description = "Total cost of realized investments per company")
-    revenue_from_realized_investment:float= Field(...,
-                                              description="Total revenue gained(realized) by divestments for each company")
+                                               description="Total cost of realized investments per company")
+    revenue_from_realized_investment: float = Field(...,
+                                                    description="Total revenue gained(realized) by divestments for each company")
     net_return: float = Field(...,
                               description="Total net return in last month by each company")
 
@@ -47,37 +45,35 @@ class CompanyDetail(BaseModel):
 
 
 class AnalyticsResponse(BaseModel):
-    from_date: date = Field(..., description="Analytics starting from this date")
+    from_date: date = Field(...,
+                            description="Analytics starting from this date")
 
     num_investments: int = Field(...,
                                  description="Total number of investments in the last month")
     num_divestments: int = Field(...,
                                  description="Total number of divestments in the last month")
 
-      
     distinct_companies_invested: int = Field(
         ..., description="Number of distinct companies invested in the last month")
     distinct_companies_divested: int = Field(
         ..., description="Number of distinct companies divested in the last month")
 
-    
     total_invested: float = Field(...,
                                   description="Total amount invested in the last month")
     total_divested: float = Field(...,
                                   description="Total amount divested in the last month")
-       
+
     quantity_invested: int = Field(...,
                                    description="Total quantity invested in the last month")
     quantity_nonrealized_investment: int = Field(...,
-                                              description="Total quantity nonrealized  ivestments in the last month")
+                                                 description="Total quantity nonrealized  ivestments in the last month")
     quantity_divested: int = Field(...,
                                    description="Total quantity divested in the last month")
 
-    
-    cost_of_realized_investment:float= Field(...,
-                                              description="Total cost of investments which are realized by divestments in the last month")  
-    revenue_from_realized_investment:float= Field(...,
-                                              description="Total revenue gained(realized) by divestments in the last month")
+    cost_of_realized_investment: float = Field(...,
+                                               description="Total cost of investments which are realized by divestments in the last month")
+    revenue_from_realized_investment: float = Field(...,
+                                                    description="Total revenue gained(realized) by divestments in the last month")
     net_return: float = Field(...,
                               description="Total net return in last month")
 
@@ -95,10 +91,10 @@ class AnalyticsResponse(BaseModel):
                 "total_invested": 15000.50,
                 "total_divested": 8000.75,
                 "quantity_invested": 5,
-                "quantity_nonrealized_investment":3,
+                "quantity_nonrealized_investment": 3,
                 "quantity_divested": 2,
-                "cost_of_realized_investment":1200.00,
-                "revenue_from_realized_investment":1323.00,
+                "cost_of_realized_investment": 1200.00,
+                "revenue_from_realized_investment": 1323.00,
                 "net_return": 123.00,
 
 
