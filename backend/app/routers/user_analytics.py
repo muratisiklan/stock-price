@@ -7,7 +7,7 @@ from typing import Optional
 
 from ..database import get_db
 from ..models import User, Divestment, Investment
-from ..schemas.analytics_schema import AnalyticsResponse, CompanyDetail
+from ..schemas.user_analytics_schema import AnalyticsResponse, CompanyDetail
 from .auth import get_current_user
 from ..config import settings_api
 
@@ -18,7 +18,7 @@ import requests
 # ie: Analytics calculated for Investments(and associated divestments) made inside specified time interval
 
 
-router = APIRouter(prefix="/analytics", tags=["analytics"])
+router = APIRouter(prefix="/user_analytics", tags=["user_analytics"])
 
 user_dependency = Depends(get_current_user)
 db_dependency = Depends(get_db)
