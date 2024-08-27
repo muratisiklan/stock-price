@@ -15,10 +15,12 @@ async def get_company_metrics(
 
 ):
 
-    #TODO: Fetch data for every company with close prices
+    #TODO: Fetch data for every company with close prices (Last 365 rows for each company)
 
 
-    #TODO: calculate additional metrics for companies
+    #TODO: Calculate additional metrics for companies
+
+    # Some Metrics that are used in metrics.py can be used 
 
     #Todo: İmpute missing values etc (data cleaning)
 

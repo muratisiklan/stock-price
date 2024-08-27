@@ -1,6 +1,7 @@
+from numpy import where
 from pymongo import MongoClient
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 from ..utils.exception import CustomException
 from ..utils.logger import logging
 from ..utils.utils import get_data_from_yfinance
@@ -8,6 +9,8 @@ from dataclasses import dataclass, field
 from typing import List
 import os.path as path
 import sys
+from datetime import date
+from typing import Optional
 
 
 @dataclass
@@ -121,4 +124,24 @@ class StockIngestion:
         finally:
             self.client.close()
             logging.info("MongoDB client closed.")
+    
+
+    #TODO: add data ingestion independent from symbols list
+
+    def ingest_all_data(self,start_from: str)-> None:
+
+        symbols_list = self.ingestion_config.symbols_list
+        #all_data = pd.DataFrame()
+
+        for symbol in symbols_list:
+            collection = self.stock_db[symbol]
+            
+            query = { "_id": { "$gt": start_from } }
+            data = collection.find(query)
+            print(data)
+            #all_data.append(data)
+
+
+        return None
+        
 
