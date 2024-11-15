@@ -70,22 +70,22 @@ class Divestment(Base):
 
 
 
-# class Company(Base):
-#     __tablename__ = "companies"
+class Company(Base):
+    __tablename__ = "companies"
 
-#     name = Column(String,primary_key=True,nullable=False)
-#     ticker = Column(String,nullabel=False)
-#     # For now only İstanbul Stock Exchange
-#     market = Column(String,nullable=False,default="bist")
+    name = Column(String,primary_key=True,nullable=False)
+    ticker = Column(String, nullable=False)
+    # For now only İstanbul Stock Exchange
+    market = Column(String,nullable=False,default="bist")
     
-#     pred_short = Column(Float,nullable=True)
-#     pred_mid = Column(Float,nullabel = True)
-#     pred_long = Column(Float,nullable=True)
+    pred_short = Column(Float,nullable=True)
+    pred_mid = Column(Float, nullable=True)
+    pred_long = Column(Float,nullable=True)
     
-#     # risk indexes
-#     risk_short = Column(Float,nullable=True)
-#     risk_mid = Column(Float,nullabel = True)
-#     risk_long = Column(Float,nullable=True)
+    # risk indexes
+    risk_short = Column(Float,nullable=True)
+    risk_mid = Column(Float, nullable=True)
+    risk_long = Column(Float,nullable=True)
 
 
 
