@@ -28,6 +28,14 @@ services:
     image: mongo:latest
     volumes:
       - mongo_data:/data/db
+  mongo-express:
+    image: mongo-express:latest
+    env_file:
+      - ./.env.mongoexpress
+    depends_on:
+      - mongo
+    ports:
+      - "8888:8081"
 
 volumes:
   postgres_data:

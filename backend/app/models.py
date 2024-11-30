@@ -8,7 +8,7 @@ from .database import Base
 
 
 class User(Base):
-    __tablename__ = "users"
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     created_at = Column(
@@ -31,7 +31,7 @@ class User(Base):
 
 
 class Investment(Base):
-    __tablename__ = "investments"
+    __tablename__ = "investment"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     date_invested = Column(DATE, nullable=False, server_default=text("now()"))
@@ -44,11 +44,11 @@ class Investment(Base):
     unit_price = Column(Float)
     quantity = Column(Integer)
     quantity_remaining = Column(Integer)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    owner_id = Column(Integer, ForeignKey("user.id"))
 
 
 class Divestment(Base):
-    __tablename__ = "divestments"
+    __tablename__ = "divestment"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     date_divested = Column(DATE, nullable=False, server_default=text("now()"))
@@ -65,13 +65,13 @@ class Divestment(Base):
     net_return = Column(Float)
 
     
-    investment_id = Column(Integer, ForeignKey("investments.id"))
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    investment_id = Column(Integer, ForeignKey("investment.id"))
+    owner_id = Column(Integer, ForeignKey("user.id"))
 
 
 
 class Company(Base):
-    __tablename__ = "companies"
+    __tablename__ = "company"
 
     name = Column(String,primary_key=True,nullable=False)
     ticker = Column(String, nullable=False)
