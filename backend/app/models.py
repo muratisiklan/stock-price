@@ -56,8 +56,6 @@ class Divestment(Base):
     date_divested = Column(DATE, nullable=False, server_default=text("now()"))
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
-    updated_at = Column(
-        TIMESTAMP(timezone=True), nullable=True,onupdate=func.now())
     date_invested = Column(DATE)
     company = Column(String)  # Ticker of corresponding company with .market
 
