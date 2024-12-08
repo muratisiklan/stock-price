@@ -5,4 +5,5 @@ logs
 experiments/
 .env.*
 secret.yaml
+*.ipynb
 #/frontend

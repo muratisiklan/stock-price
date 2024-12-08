@@ -2,8 +2,7 @@ from sqlalchemy import Column, ForeignKey
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import DATE, TIMESTAMP
 from sqlalchemy.types import Boolean, Float, Integer, String
-from sqlalchemy.util import symbol
-
+from sqlalchemy import func
 from .database import Base
 
 
@@ -37,13 +36,16 @@ class Investment(Base):
     date_invested = Column(DATE, nullable=False, server_default=text("now()"))
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True,onupdate=func.now())
     is_active = Column(Boolean, default=True)
     title = Column(String)
-    company = Column(String)
+    company = Column(String) # Ticker of corresponding company with .market 
     description = Column(String)
     unit_price = Column(Float)
     quantity = Column(Integer)
     quantity_remaining = Column(Integer)
+
     owner_id = Column(Integer, ForeignKey("user.id"))
 
 
@@ -54,8 +56,10 @@ class Divestment(Base):
     date_divested = Column(DATE, nullable=False, server_default=text("now()"))
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    updated_at = Column(
+        TIMESTAMP(timezone=True), nullable=True,onupdate=func.now())
     date_invested = Column(DATE)
-    company = Column(String)
+    company = Column(String)  # Ticker of corresponding company with .market
 
     unit_price = Column(Float)
     quantity = Column(Integer)
@@ -73,7 +77,8 @@ class Divestment(Base):
 class Company(Base):
     __tablename__ = "company"
 
-    name = Column(String,primary_key=True,nullable=False)
+    id = Column(Integer,primary_key=True,nullable=False,autoincrement=True)
+    name = Column(String,nullable=False)
     ticker = Column(String, nullable=False)
     # For now only İstanbul Stock Exchange
     market = Column(String,nullable=False,default="bist")

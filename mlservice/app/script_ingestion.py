@@ -12,7 +12,7 @@ start_date = "2024-05-05"
 if not is_up_to_date(mongo_uri):
     try:
         stock_ingestion = StockIngestion(mongo_uri)
-        stock_ingestion.ingest_all_data("2024-06-06")
+        #stock_ingestion.ingest_all_data("2024-06-06")
         stock_ingestion.initiate_stock_ingestion()
     except Exception as e:
         raise CustomException(e, sys)
