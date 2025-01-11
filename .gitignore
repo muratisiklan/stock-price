@@ -6,4 +6,5 @@ experiments/
 .env.*
 secret.yaml
 *.ipynb
+/Notes.txt
 #/frontend

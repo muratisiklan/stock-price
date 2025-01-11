@@ -4,6 +4,7 @@ from sqlalchemy.sql.sqltypes import DATE, TIMESTAMP
 from sqlalchemy.types import Boolean, Float, Integer, String
 from sqlalchemy import func
 from .database import Base
+from sqlalchemy.dialects.postgresql import JSON
 
 
 class User(Base):
@@ -69,6 +70,28 @@ class Divestment(Base):
     
     investment_id = Column(Integer, ForeignKey("investment.id"))
     owner_id = Column(Integer, ForeignKey("user.id"))
+
+class Process(Base):
+    __tablename__ = "process"
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    name = Column(String, nullable=False)
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    explanation = Column(String, nullable=False)
+
+
+class Log(Base):
+    __tablename__ = "mesaj_log"
+
+    id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
+    request_message = Column(JSON, nullable=False)
+    response_message = Column(JSON, nullable=False)
+
+    #TODO: For Now process id can be nullable
+    process_id = Column(Integer, ForeignKey("process.id"),nullable=True)
+    user_id = Column(Integer, ForeignKey("user.id"),nullable=False)
 
 
 
