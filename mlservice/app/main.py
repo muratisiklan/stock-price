@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import metrics,charts
+from .routers import metrics,charts,recommendation
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings_api
 
@@ -18,6 +18,7 @@ app.add_middleware(
 
 app.include_router(metrics.router)
 app.include_router(charts.router)
+app.include_router(recommendation.router)
 
 if __name__ == "__main__":
     import uvicorn

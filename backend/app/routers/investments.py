@@ -6,7 +6,7 @@ from starlette import status
 from sqlalchemy import func
 
 from ..database import get_db
-from ..models import Investment, User, Divestment
+from ..models import Investment, User, Divestment,Log
 from ..schemas.investment_schema import InvestmentRequest
 from .auth import get_current_user
 

@@ -121,3 +121,32 @@ def sanitize_for_json(data):
             return None  # or a default value
     else:
         return data
+
+
+def get_data_as_data_frame(mongo_uri, days) -> pd.DataFrame:
+
+    with MongoClient(mongo_uri) as client:
+        try:
+            database = client.stockdata
+            all_data = []
+            for collection_name in database.list_collection_names():
+                collection = database[collection_name]
+                # Fetch last 365 entries
+                last_entries = list(
+                    collection.find()
+                    .sort("_id", -1)  # Sort by `_id` in descending order
+                    .limit(days)
+                )
+                # Add collection name to each document
+                for entry in last_entries:
+                    entry['collection_name'] = collection_name
+                    all_data.append(entry)
+
+            # Convert to Pandas DataFrame
+            df = pd.DataFrame(all_data)
+            return df
+        except Exception:
+            raise CustomException(
+                f"Error retrieving historical data", sys)
+        finally:
+            client.close()

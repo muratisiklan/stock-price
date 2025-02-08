@@ -3,7 +3,7 @@ from datetime import datetime, date
 from typing import Optional
 from ..components.stage02get_data import CompanyMetrics
 from ..database import mongo_uri
-from ..utils.utils import sanitize_for_json
+from ..utils.utils import sanitize_for_json ,get_data_as_data_frame
 
 router = APIRouter(prefix="/recommendation", tags=["recommendation"])
 
@@ -14,6 +14,9 @@ async def get_company_metrics(
                         description="Stock symbol of the company"),
 
 ):
+    data = get_data_as_data_frame(mongo_uri,200)
+    print(data)
+    print(type(data))
 
     #TODO: Fetch data for every company with close prices (Last 365 rows for each company)
 

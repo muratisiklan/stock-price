@@ -86,8 +86,8 @@ class Log(Base):
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()"))
-    request_message = Column(JSON, nullable=False)
-    response_message = Column(JSON, nullable=False)
+    request_message = Column(JSON, nullable=False,default=dict)
+    response_message = Column(JSON, nullable=False,default=dict)
 
     #TODO: For Now process id can be nullable
     process_id = Column(Integer, ForeignKey("process.id"),nullable=True)
