@@ -1,13 +1,23 @@
 from fastapi import FastAPI
-from .database import engine, Base
-from .routers import auth, investments, admin, user_analytics, users, divestments, company_analytics
 from fastapi.middleware.cors import CORSMiddleware
+
 from .config import settings_api
+from .database import Base, engine
+from .routers import (
+    admin,
+    auth,
+    company_analytics,
+    divestments,
+    investments,
+    user_analytics,
+    users,
+)
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 # About CORS
 # list of URLs api can talk. if all origins = ["*"]
+
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -27,7 +37,8 @@ app.include_router(user_analytics.router)
 app.include_router(company_analytics.router)
 
 
-
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app,host=f"{settings_api.app_host}",port=settings_api.app_port)
+
+    uvicorn.run(app, host=f"{settings_api.app_host}", port=settings_api.app_port)
+

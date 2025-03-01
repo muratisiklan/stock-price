@@ -16,9 +16,11 @@ def get_data_from_yfinance(symbol: str, start_date: str, end_date: str):
     try:
         # Fetch historical stock data for the specified symbol and date range from Yahoo Finance
         stock_data = yf.download(symbol, start=start_date, end=end_date)
-
-        # Reset the index and format the '_id' field as a string
+        
+        stock_data.columns = stock_data.columns.droplevel(1)
+        stock_data = stock_data.iloc[1:].copy()
         stock_data.reset_index(inplace=True)
+        stock_data.columns.name =None
 
         return stock_data
     except Exception as e:

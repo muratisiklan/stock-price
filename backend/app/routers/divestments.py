@@ -62,7 +62,7 @@ async def create_divestment(
     if investment_model.quantity_remaining < request.quantity:
         raise HTTPException(
             status_code=400, detail="Cannot divest more than the remaining quantity.")
-    if investment_model.date_invested >= request.date_divested:
+    if investment_model.date_invested > request.date_divested:
         raise HTTPException(status_code=400,detail="Cannot divest before respective investments' date!")
 
     # Create the new divestment
