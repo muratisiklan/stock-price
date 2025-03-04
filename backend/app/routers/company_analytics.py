@@ -21,9 +21,10 @@ router = APIRouter(prefix="/company_analytics", tags=["company_analytics"])
 
 user_dependency = Depends(get_current_user)
 db_dependency = Depends(get_db)
-#response_model = CompanyAnalyticsResponse,
+# response_model = CompanyAnalyticsResponse,
 
-@router.get("/",response_model=CompanyAnalyticsResponse  ,status_code=status.HTTP_200_OK)
+
+@router.get("/", response_model=CompanyAnalyticsResponse, status_code=status.HTTP_200_OK)
 async def get_company_metrics(
     db: Session = db_dependency,
     user: dict = user_dependency,
@@ -66,8 +67,8 @@ async def get_company_metrics(
                                 detail=f"Error fetching metrics for {symbol}")
 
     response = CompanyAnalyticsResponse(
-         holding_companies=companies,
-         company_metrics=company_metrics_list
-     )
+        holding_companies=companies,
+        company_metrics=company_metrics_list
+    )
 
     return response

@@ -14,6 +14,20 @@ class CompanyMetrics():
         self.symbols_list = list(pd.read_csv(path.abspath(
             path.join(__file__, "../../../artifacts/base_data/bist_data.csv")))["Symbol"])
 
+    def get_company_data(self, symbol: str, start_date: str) -> pd.DataFrame:
+        """_summary_
+
+        Raises:
+            CustomException: _description_
+
+        Returns:
+            _type_: _description_
+        """
+
+        data_frame = get_historical_data(self.uri, symbol, start_date)
+
+        return data_frame
+
     # TODO: Metric calculations should be updated correctly some of them can be eliminated
 
     def calculate_company_metrics(self, symbol: str, start_date: str, return_data: bool = False) -> dict:
@@ -32,7 +46,7 @@ class CompanyMetrics():
             # Fetch historical data for the last 'last_n_days' days
             df = get_historical_data(self.uri, symbol, start_date)
 
-            closing_prices = df['Close']
+            closing_prices = df['Close'].ffill(limit=1)
 
             # Calculate metric
 
@@ -43,8 +57,7 @@ class CompanyMetrics():
             percentage_change = (
                 (closing_prices.iloc[-1] - closing_prices.iloc[0]) / closing_prices.iloc[0]) * 100
 
-            daily_returns = closing_prices.pct_change(
-                fill_method="ffill").dropna()
+            daily_returns = closing_prices.pct_change().dropna()
             volatility = daily_returns.std() * np.sqrt(len(closing_prices))
 
             delta = closing_prices.diff()
@@ -80,8 +93,8 @@ class CompanyMetrics():
                 'percentage_change': round(percentage_change, 3),
                 'volatility': round(volatility, 3),
                 'rsi': round(rsi, 3),
-                'bollinger_up': round(latest_upper_band, 3),
-                'bollinger_low': round(latest_lower_band, 3),
+                'bollinger_up': round(np.nan_to_num(latest_upper_band, nan=0), 3),
+                'bollinger_low': round(np.nan_to_num(latest_lower_band, nan=0), 3),
                 'sharpe_ratio': round(sharpe_ratio, 3)
             }
 

@@ -20,7 +20,7 @@ async def get_company_metrics(
                         description="Stock symbol of the company"),
     start_date: Optional[str] = Query(datetime.today().strftime("%Y-%m-%d"),
                                       lt=datetime.today().strftime("%Y-%m-%d"),
-                                      description="Stock symbol of the company"),
+                                      description="Will calculate metrics starting from this date"),
 ):
 
     # if start_date >= datetime.today().strftime("%Y-%m-%d"):
