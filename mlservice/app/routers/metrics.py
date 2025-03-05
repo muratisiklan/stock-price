@@ -1,6 +1,8 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from datetime import datetime, date
+from datetime import date, datetime
 from typing import Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+
 from ..components.stage02get_data import CompanyMetrics
 from ..database import mongo_uri
 from ..utils.utils import sanitize_for_json
@@ -14,13 +16,14 @@ from ..utils.utils import sanitize_for_json
 router = APIRouter(prefix="/metrics", tags=["metrics"])
 
 
-@router.get("/",  status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_200_OK)
 async def get_company_metrics(
-    symbol: str = Query(default="ASELS.IS",
-                        description="Stock symbol of the company"),
-    start_date: Optional[str] = Query(datetime.today().strftime("%Y-%m-%d"),
-                                      lt=datetime.today().strftime("%Y-%m-%d"),
-                                      description="Will calculate metrics starting from this date"),
+    symbol: str = Query(default="ASELS.IS", description="Stock symbol of the company"),
+    start_date: Optional[str] = Query(
+        datetime.today().strftime("%Y-%m-%d"),
+        lt=datetime.today().strftime("%Y-%m-%d"),
+        description="Will calculate metrics starting from this date",
+    ),
 ):
 
     # if start_date >= datetime.today().strftime("%Y-%m-%d"):
@@ -32,20 +35,19 @@ async def get_company_metrics(
     # Initialize the CompanyMetrics instance
     cm = CompanyMetrics(mongo_uri)
 
+    if symbol not in cm.symbols_list:
+        raise HTTPException(status_code=404, detail="Ticker is not in company list!")
+
     # Attempt to calculate the company metrics
     try:
         metrics = cm.calculate_company_metrics(symbol, start_date)
     except ValueError as e:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="An error occurred while calculating metrics."
+            detail="An error occurred while calculating metrics.",
         )
     response = sanitize_for_json(metrics)
 
     return response
-
