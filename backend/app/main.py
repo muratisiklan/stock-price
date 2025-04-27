@@ -12,9 +12,26 @@ from .routers import (
     user_analytics,
     users,
 )
+from .scripts.comp_init import init_companies
+from .scripts.country_init import init_countries
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
+
+# Initialize companies
+try:
+    init_companies()
+except Exception as e:
+    print(f"Error during company initialization: {e}")
+    
+# Initialize countries
+try:
+    init_countries()
+except Exception as e:
+    print(f"Error during country initialization: {e}")
+
+
+
 # About CORS
 # list of URLs api can talk. if all origins = ["*"]
 

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, func,Enum
+from sqlalchemy import Column, ForeignKey, func, Enum
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import DATE, TIMESTAMP
@@ -15,7 +15,8 @@ class User(Base):
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
-    role = Column(Enum(UserRole,name = "user_role"), nullable = False, default=UserRole.PLEB)
+    role = Column(Enum(UserRole, name="user_role"),
+                  nullable=False, default=UserRole.PLEB)
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     first_name = Column(String)
@@ -39,19 +40,19 @@ class Investment(Base):
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
-    updated_at = Column(TIMESTAMP(timezone=True), nullable=True, onupdate=func.now())
+    updated_at = Column(TIMESTAMP(timezone=True),
+                        nullable=True, onupdate=func.now())
     is_active = Column(Boolean, default=True)
     title = Column(String)
-    company = Column(String,nullable=False)
-    
+    company = Column(String, nullable=False)
+
     description = Column(String)
     unit_price = Column(Float)
     quantity = Column(Integer)
     quantity_remaining = Column(Integer)
 
     owner_id = Column(Integer, ForeignKey("user.id"))
-    #company = Column(String, ForeignKey("company.name")) # Ticker of corresponding company with .market
-
+    # company = Column(String, ForeignKey("company.name")) # Ticker of corresponding company with .market
 
 
 class Divestment(Base):
@@ -73,8 +74,7 @@ class Divestment(Base):
 
     investment_id = Column(Integer, ForeignKey("investment.id"))
     owner_id = Column(Integer, ForeignKey("user.id"))
-    #company = Column(String, ForeignKey("company.name")) # Ticker of corresponding company with .market
-
+    # company = Column(String, ForeignKey("company.name")) # Ticker of corresponding company with .market
 
 
 class Process(Base):
@@ -106,39 +106,44 @@ class Company(Base):
     __tablename__ = "company"
 
     id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
-    name = Column(String, nullable=False,unique=True)
-    ticker = Column(String, nullable = False,unique=True)
-    
-    # For now only İstanbul Stock Exchange
-    market_id = Column(Integer, ForeignKey("market.id"),nullable=True, default="bist")
-    country_id = Column(Integer,ForeignKey("country.id") ,nullable=True)
+    name = Column(String, nullable=False, unique=False)
+    ticker = Column(String, nullable=False, unique=False)
 
-    # pred_short = Column(Float,nullable=True)
+    # pred_short = Column(Float, nullable=True)
     # pred_mid = Column(Float, nullable=True)
-    # pred_long = Column(Float,nullable=True)
-    #
+    # pred_long = Column(Float, nullable=True)
+
     # # risk indexes
-    # risk_short = Column(Float,nullable=True)
+    # risk_short = Column(Float, nullable=True)
     # risk_mid = Column(Float, nullable=True)
-    # risk_long = Column(Float,nullable=True)
-    
+    # risk_long = Column(Float, nullable=True)
+
+    # For now only İstanbul Stock Exchange
+    market_id = Column(Integer, ForeignKey("market.id"), nullable=True)
+
+
 class Country(Base):
     __tablename__ = "country"
-    
-    id = Column(Integer,primary_key=True,autoincrement=True)
-    name = Column(String,nullable=False,unique=True)
-    continent = Column(String,nullable=True) # Nullable for now
-    credit_rating = Column(Integer,nullable=True)
-    credit_status = Column(Integer,nullable=True)
-    gdp  = Column(Float,nullable=True)
-    
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    country_code = Column(String, nullable=False)
+    name = Column(String, nullable=False)
+    region = Column(String, nullable=True)
+    income_level = Column(Integer, nullable=True)
+
+    # credit_rating = Column(Integer, nullable=True)
+    # credit_status = Column(Integer, nullable=True)
+    # gdp = Column(Float, nullable=True)
+
+
 class Market(Base):
     __tablename__ = "market"
-    
-    id =  Column(Integer,primary_key=True,autoincrement=True)
-    name = Column(String,nullable=False)
-    index_30 = Column(Float,nullable=False)
-    index_50 = Column(Float,nullable=False)
-    index_100 = Column(Float,nullable=False)
 
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String, nullable=True)
+    index_30 = Column(Float, nullable=True)
+    index_50 = Column(Float, nullable=True)
+    index_100 = Column(Float, nullable=True)
     
+    country_id = Column(Integer, ForeignKey("country.id"), nullable=True)
+

@@ -1,0 +1,248 @@
+CountryCode,Name,Region,IncomeLevel
+AFG,Afghanistan,South Asia,1.0
+ALB,Albania,Europe & Central Asia,3.0
+DZA,Algeria,Middle East & North Africa,3.0
+ASM,American Samoa,East Asia & Pacific,3.0
+ADO,Andorra,Europe & Central Asia,4.0
+AGO,Angola,Sub-Saharan Africa,3.0
+ATG,Antigua and Barbuda,Latin America & Caribbean,4.0
+ARB,Arab World,,
+ARG,Argentina,Latin America & Caribbean,4.0
+ARM,Armenia,Europe & Central Asia,2.0
+ABW,Aruba,Latin America & Caribbean,4.0
+AUS,Australia,East Asia & Pacific,5.0
+AUT,Austria,Europe & Central Asia,5.0
+AZE,Azerbaijan,Europe & Central Asia,3.0
+BHR,Bahrain,Middle East & North Africa,4.0
+BGD,Bangladesh,South Asia,2.0
+BRB,Barbados,Latin America & Caribbean,4.0
+BLR,Belarus,Europe & Central Asia,3.0
+BEL,Belgium,Europe & Central Asia,5.0
+BLZ,Belize,Latin America & Caribbean,3.0
+BEN,Benin,Sub-Saharan Africa,1.0
+BMU,Bermuda,North America,4.0
+BTN,Bhutan,South Asia,2.0
+BOL,Bolivia,Latin America & Caribbean,2.0
+BIH,Bosnia and Herzegovina,Europe & Central Asia,3.0
+BWA,Botswana,Sub-Saharan Africa,3.0
+BRA,Brazil,Latin America & Caribbean,3.0
+BRN,Brunei,East Asia & Pacific,4.0
+BGR,Bulgaria,Europe & Central Asia,3.0
+BFA,Burkina Faso,Sub-Saharan Africa,1.0
+BDI,Burundi,Sub-Saharan Africa,1.0
+CPV,Cabo Verde,Sub-Saharan Africa,2.0
+KHM,Cambodia,East Asia & Pacific,1.0
+CMR,Cameroon,Sub-Saharan Africa,2.0
+CAN,Canada,North America,5.0
+CSS,Caribbean small states,,
+CYM,Cayman Islands,Latin America & Caribbean,4.0
+CAF,Central African Republic,Sub-Saharan Africa,1.0
+CEB,Central Europe and the Baltics,,
+TCD,Chad,Sub-Saharan Africa,1.0
+CHI,Channel Islands,Europe & Central Asia,4.0
+CHL,Chile,Latin America & Caribbean,5.0
+CHN,China,East Asia & Pacific,3.0
+COL,Colombia,Latin America & Caribbean,3.0
+COM,Comoros,Sub-Saharan Africa,1.0
+COG,Congo,Sub-Saharan Africa,2.0
+CRI,Costa Rica,Latin America & Caribbean,3.0
+CIV,Côte d'Ivoire,Sub-Saharan Africa,2.0
+HRV,Croatia,Europe & Central Asia,4.0
+CUB,Cuba,Latin America & Caribbean,3.0
+CUW,Curaçao,Latin America & Caribbean,4.0
+CYP,Cyprus,Europe & Central Asia,4.0
+CZE,Czech Republic,Europe & Central Asia,5.0
+PRK,Dem. People's Rep. Korea,East Asia & Pacific,1.0
+ZAR,Dem. Rep. Congo,Sub-Saharan Africa,1.0
+DNK,Denmark,Europe & Central Asia,5.0
+DJI,Djibouti,Middle East & North Africa,2.0
+DMA,Dominica,Latin America & Caribbean,3.0
+DOM,Dominican Republic,Latin America & Caribbean,3.0
+EAS,East Asia & Pacific (all income levels),,
+EAP,East Asia & Pacific (developing only),,
+ECU,Ecuador,Latin America & Caribbean,3.0
+EGY,Egypt,Middle East & North Africa,2.0
+SLV,El Salvador,Latin America & Caribbean,2.0
+GNQ,Equatorial Guinea,Sub-Saharan Africa,4.0
+ERI,Eritrea,Sub-Saharan Africa,1.0
+EST,Estonia,Europe & Central Asia,5.0
+ETH,Ethiopia,Sub-Saharan Africa,1.0
+EMU,Euro area,,
+ECS,Europe & Central Asia (all income levels),,
+ECA,Europe & Central Asia (developing only),,
+EUU,European Union,,
+FRO,Faeroe Islands,Europe & Central Asia,4.0
+FJI,Fiji,East Asia & Pacific,3.0
+FIN,Finland,Europe & Central Asia,5.0
+FCS,Fragile and conflict affected situations,,
+FRA,France,Europe & Central Asia,5.0
+PYF,French Polynesia,East Asia & Pacific,4.0
+GAB,Gabon,Sub-Saharan Africa,3.0
+GEO,Georgia,Europe & Central Asia,2.0
+DEU,Germany,Europe & Central Asia,5.0
+GHA,Ghana,Sub-Saharan Africa,2.0
+GRC,Greece,Europe & Central Asia,5.0
+GRL,Greenland,Europe & Central Asia,4.0
+GRD,Grenada,Latin America & Caribbean,3.0
+GUM,Guam,East Asia & Pacific,4.0
+GTM,Guatemala,Latin America & Caribbean,2.0
+GIN,Guinea,Sub-Saharan Africa,1.0
+GNB,Guinea-Bissau,Sub-Saharan Africa,1.0
+GUY,Guyana,Latin America & Caribbean,2.0
+HTI,Haiti,Latin America & Caribbean,1.0
+HPC,Heavily indebted poor countries (HIPC),,
+HIC,High income,,
+NOC,High income: nonOECD,,
+OEC,High income: OECD,,
+HND,Honduras,Latin America & Caribbean,2.0
+HKG,"Hong Kong SAR, China",East Asia & Pacific,4.0
+HUN,Hungary,Europe & Central Asia,5.0
+ISL,Iceland,Europe & Central Asia,5.0
+IND,India,South Asia,2.0
+IDN,Indonesia,East Asia & Pacific,2.0
+IRN,Iran,Middle East & North Africa,3.0
+IRQ,Iraq,Middle East & North Africa,3.0
+IRL,Ireland,Europe & Central Asia,5.0
+IMY,Isle of Man,Europe & Central Asia,4.0
+ISR,Israel,Middle East & North Africa,5.0
+ITA,Italy,Europe & Central Asia,5.0
+JAM,Jamaica,Latin America & Caribbean,3.0
+JPN,Japan,East Asia & Pacific,5.0
+JOR,Jordan,Middle East & North Africa,3.0
+KAZ,Kazakhstan,Europe & Central Asia,3.0
+KEN,Kenya,Sub-Saharan Africa,2.0
+KIR,Kiribati,East Asia & Pacific,2.0
+KOR,Korea,East Asia & Pacific,5.0
+KSV,Kosovo,Europe & Central Asia,2.0
+KWT,Kuwait,Middle East & North Africa,4.0
+KGZ,Kyrgyz Republic,Europe & Central Asia,2.0
+LAO,Lao PDR,East Asia & Pacific,2.0
+LCN,Latin America & Caribbean (all income levels),,
+LAC,Latin America & Caribbean (developing only),,
+LVA,Latvia,Europe & Central Asia,4.0
+LDC,Least developed countries: UN classification,,
+LBN,Lebanon,Middle East & North Africa,3.0
+LSO,Lesotho,Sub-Saharan Africa,2.0
+LBR,Liberia,Sub-Saharan Africa,1.0
+LBY,Libya,Middle East & North Africa,3.0
+LIE,Liechtenstein,Europe & Central Asia,4.0
+LTU,Lithuania,Europe & Central Asia,4.0
+LMY,Low & middle income,,
+LIC,Low income,,
+LMC,Lower middle income,,
+LUX,Luxembourg,Europe & Central Asia,5.0
+MAC,"Macao SAR, China",East Asia & Pacific,4.0
+MKD,Macedonia,Europe & Central Asia,3.0
+MDG,Madagascar,Sub-Saharan Africa,1.0
+MWI,Malawi,Sub-Saharan Africa,1.0
+MYS,Malaysia,East Asia & Pacific,3.0
+MDV,Maldives,South Asia,3.0
+MLI,Mali,Sub-Saharan Africa,1.0
+MLT,Malta,Middle East & North Africa,4.0
+MHL,Marshall Islands,East Asia & Pacific,3.0
+MRT,Mauritania,Sub-Saharan Africa,2.0
+MUS,Mauritius,Sub-Saharan Africa,3.0
+MEX,Mexico,Latin America & Caribbean,3.0
+FSM,Micronesia,East Asia & Pacific,2.0
+MEA,Middle East & North Africa (all income levels),,
+MNA,Middle East & North Africa (developing only),,
+MIC,Middle income,,
+MDA,Moldova,Europe & Central Asia,2.0
+MCO,Monaco,Europe & Central Asia,4.0
+MNG,Mongolia,East Asia & Pacific,3.0
+MNE,Montenegro,Europe & Central Asia,3.0
+MAR,Morocco,Middle East & North Africa,2.0
+MOZ,Mozambique,Sub-Saharan Africa,1.0
+MMR,Myanmar,East Asia & Pacific,2.0
+NAM,Namibia,Sub-Saharan Africa,3.0
+NPL,Nepal,South Asia,1.0
+NLD,Netherlands,Europe & Central Asia,5.0
+NCL,New Caledonia,East Asia & Pacific,4.0
+NZL,New Zealand,East Asia & Pacific,5.0
+NIC,Nicaragua,Latin America & Caribbean,2.0
+NER,Niger,Sub-Saharan Africa,1.0
+NGA,Nigeria,Sub-Saharan Africa,2.0
+NAC,North America,,
+MNP,Northern Mariana Islands,East Asia & Pacific,4.0
+NOR,Norway,Europe & Central Asia,5.0
+OED,OECD members,,
+OMN,Oman,Middle East & North Africa,4.0
+OSS,Other small states,,
+PSS,Pacific island small states,,
+PAK,Pakistan,South Asia,2.0
+PLW,Palau,East Asia & Pacific,3.0
+PAN,Panama,Latin America & Caribbean,3.0
+PNG,Papua New Guinea,East Asia & Pacific,2.0
+PRY,Paraguay,Latin America & Caribbean,3.0
+PER,Peru,Latin America & Caribbean,3.0
+PHL,Philippines,East Asia & Pacific,2.0
+POL,Poland,Europe & Central Asia,5.0
+PRT,Portugal,Europe & Central Asia,5.0
+PRI,Puerto Rico,Latin America & Caribbean,4.0
+QAT,Qatar,Middle East & North Africa,4.0
+ROM,Romania,Europe & Central Asia,3.0
+RUS,Russia,Europe & Central Asia,4.0
+RWA,Rwanda,Sub-Saharan Africa,1.0
+WSM,Samoa,East Asia & Pacific,2.0
+SMR,San Marino,Europe & Central Asia,4.0
+STP,São Tomé and Principe,Sub-Saharan Africa,2.0
+SAU,Saudi Arabia,Middle East & North Africa,4.0
+SEN,Senegal,Sub-Saharan Africa,2.0
+SRB,Serbia,Europe & Central Asia,3.0
+SYC,Seychelles,Sub-Saharan Africa,4.0
+SLE,Sierra Leone,Sub-Saharan Africa,1.0
+SGP,Singapore,East Asia & Pacific,4.0
+SXM,Sint Maarten (Dutch part),Latin America & Caribbean,4.0
+SVK,Slovak Republic,Europe & Central Asia,5.0
+SVN,Slovenia,Europe & Central Asia,5.0
+SST,Small states,,
+SLB,Solomon Islands,East Asia & Pacific,2.0
+SOM,Somalia,Sub-Saharan Africa,1.0
+ZAF,South Africa,Sub-Saharan Africa,3.0
+SAS,South Asia,,
+SSD,South Sudan,Sub-Saharan Africa,1.0
+ESP,Spain,Europe & Central Asia,5.0
+LKA,Sri Lanka,South Asia,2.0
+KNA,St. Kitts and Nevis,Latin America & Caribbean,4.0
+LCA,St. Lucia,Latin America & Caribbean,3.0
+MAF,St. Martin (French part),Latin America & Caribbean,4.0
+VCT,St. Vincent and the Grenadines,Latin America & Caribbean,3.0
+SSF,Sub-Saharan Africa (all income levels),,
+SSA,Sub-Saharan Africa (developing only),,
+SDN,Sudan,Sub-Saharan Africa,2.0
+SUR,Suriname,Latin America & Caribbean,3.0
+SWZ,Swaziland,Sub-Saharan Africa,2.0
+SWE,Sweden,Europe & Central Asia,5.0
+CHE,Switzerland,Europe & Central Asia,5.0
+SYR,Syrian Arab Republic,Middle East & North Africa,2.0
+TJK,Tajikistan,Europe & Central Asia,2.0
+TZA,Tanzania,Sub-Saharan Africa,1.0
+THA,Thailand,East Asia & Pacific,3.0
+BHS,The Bahamas,Latin America & Caribbean,4.0
+GMB,The Gambia,Sub-Saharan Africa,1.0
+TMP,Timor-Leste,East Asia & Pacific,2.0
+TGO,Togo,Sub-Saharan Africa,1.0
+TON,Tonga,East Asia & Pacific,3.0
+TTO,Trinidad and Tobago,Latin America & Caribbean,4.0
+TUN,Tunisia,Middle East & North Africa,3.0
+TUR,Turkey,Europe & Central Asia,3.0
+TKM,Turkmenistan,Europe & Central Asia,3.0
+TCA,Turks and Caicos Islands,Latin America & Caribbean,4.0
+TUV,Tuvalu,East Asia & Pacific,3.0
+UGA,Uganda,Sub-Saharan Africa,1.0
+UKR,Ukraine,Europe & Central Asia,2.0
+ARE,United Arab Emirates,Middle East & North Africa,4.0
+GBR,United Kingdom,Europe & Central Asia,5.0
+USA,United States,North America,5.0
+UMC,Upper middle income,,
+URY,Uruguay,Latin America & Caribbean,4.0
+UZB,Uzbekistan,Europe & Central Asia,2.0
+VUT,Vanuatu,East Asia & Pacific,2.0
+VEN,Venezuela,Latin America & Caribbean,4.0
+VNM,Vietnam,East Asia & Pacific,2.0
+VIR,Virgin Islands,Latin America & Caribbean,4.0
+WBG,West Bank and Gaza,Middle East & North Africa,2.0
+WLD,World,,
+YEM,Yemen,Middle East & North Africa,2.0
+ZMB,Zambia,Sub-Saharan Africa,2.0
+ZWE,Zimbabwe,Sub-Saharan Africa,1.0
