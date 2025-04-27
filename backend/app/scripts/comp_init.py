@@ -18,7 +18,7 @@ def init_companies():
                     new_company = Company(
                         ticker=row['Symbol'],
                         name=row['Name'],
-                        market_id=None,  # or some default if you want
+                        market_id=row['Market_id'],  
                     )
                     db.add(new_company)
                 else:

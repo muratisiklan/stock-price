@@ -141,9 +141,17 @@ class Market(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=True)
+    country = Column(String, nullable=True)    
+    currency = Column(String, nullable=True)
+    timezone = Column(String, nullable=True)
+    mic_code = Column(String, nullable=True)
+    yahoo_suffix = Column(String, nullable=True)
+
+
+    
     index_30 = Column(Float, nullable=True)
     index_50 = Column(Float, nullable=True)
     index_100 = Column(Float, nullable=True)
     
-    country_id = Column(Integer, ForeignKey("country.id"), nullable=True)
+    #country_id = Column(Integer, ForeignKey("country.id"), nullable=True)
 

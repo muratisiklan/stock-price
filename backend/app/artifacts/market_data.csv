@@ -1,0 +1,17 @@
+Name,Country,Currency,Timezone,Mic_code,Yahoo_suffix
+Borsa Istanbul,Turkey,TRY,Europe/Istanbul,XBIS,.IS
+New York Stock Exchange,USA,USD,America/New_York,XNYS,
+NASDAQ,USA,USD,America/New_York,XNAS,
+London Stock Exchange,United Kingdom,GBP,Europe/London,XLON,.L
+Tokyo Stock Exchange,Japan,JPY,Asia/Tokyo,XTKS,.T
+Shanghai Stock Exchange,China,CNY,Asia/Shanghai,XSHG,.SS
+Hong Kong Stock Exchange,Hong Kong,HKD,Asia/Hong_Kong,XHKG,.HK
+Euronext Paris,France,EUR,Europe/Paris,XPAR,.PA
+Frankfurt Stock Exchange (Deutsche Börse),Germany,EUR,Europe/Berlin,XFRA,.F
+SIX Swiss Exchange,Switzerland,CHF,Europe/Zurich,XSWX,.SW
+Toronto Stock Exchange,Canada,CAD,America/Toronto,XTSX,.TO
+Australian Securities Exchange,Australia,AUD,Australia/Sydney,XASX,.AX
+BM&FBOVESPA (B3),Brazil,BRL,America/Sao_Paulo,BVMF,.SA
+Korea Exchange,South Korea,KRW,Asia/Seoul,XKRX,.KS
+National Stock Exchange of India,India,INR,Asia/Kolkata,XNSE,.NS
+Johannesburg Stock Exchange,South Africa,ZAR,Africa/Johannesburg,XJSE,.JO
