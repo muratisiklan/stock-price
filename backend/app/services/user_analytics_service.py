@@ -10,7 +10,7 @@ from ..models import Divestment, Investment
 from ..schemas.user_analytics_schema import AnalyticsResponse, CompanyDetail
 
 
-def get_user_analytics(db: Session, user: dict, last_month_start: date) -> AnalyticsResponse:
+def get_user_analytics(db: Session, user: dict, start_date: date) -> AnalyticsResponse:
     # Query for investments
     investment_data = (
         db.query(
@@ -28,7 +28,7 @@ def get_user_analytics(db: Session, user: dict, last_month_start: date) -> Analy
         )
         .filter(
             Investment.owner_id == user["id"],
-            Investment.date_invested >= last_month_start,
+            Investment.date_invested >= start_date,
         )
         .first()
     )
@@ -52,7 +52,7 @@ def get_user_analytics(db: Session, user: dict, last_month_start: date) -> Analy
         )
         .filter(
             Divestment.owner_id == user["id"],
-            Divestment.date_invested >= last_month_start,
+            Divestment.date_invested >= start_date,
         )
         .first()
     )
@@ -72,7 +72,7 @@ def get_user_analytics(db: Session, user: dict, last_month_start: date) -> Analy
         )
         .filter(
             Investment.owner_id == user["id"],
-            Investment.date_invested >= last_month_start,
+            Investment.date_invested >= start_date,
         )
         .group_by(Investment.company)
         .subquery()
@@ -94,7 +94,7 @@ def get_user_analytics(db: Session, user: dict, last_month_start: date) -> Analy
         )
         .filter(
             Divestment.owner_id == user["id"],
-            Divestment.date_invested >= last_month_start,
+            Divestment.date_invested >= start_date,
         )
         .group_by(Divestment.company)
         .subquery()
@@ -147,7 +147,7 @@ def get_user_analytics(db: Session, user: dict, last_month_start: date) -> Analy
 
     # Construct the final AnalyticsResponse object
     response = AnalyticsResponse(
-        from_date=last_month_start,
+        from_date=start_date,
         num_investments=investment_data.num_investments or 0,
         num_divestments=divestment_data.num_divestments or 0,
         distinct_companies_invested=investment_data.distinct_companies_invested or 0,

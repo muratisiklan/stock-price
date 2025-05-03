@@ -10,7 +10,7 @@ from ..schemas.company_analytics_schema import CompanyMetrics, CompanyAnalyticsR
 def get_company_metrics_service(db: Session, user: dict, start_from: str) -> CompanyAnalyticsResponse:
     # Get distinct companies associated with the user's investments after the start date
     comp_query = db.query(distinct(Investment.company)).filter(
-        Investment.is_active == True,
+        #Investment.is_active == True,
         Investment.owner_id == user.get("id"),
         Investment.date_invested >= start_from
     ).all()
