@@ -59,22 +59,38 @@ class Divestment(Base):
     __tablename__ = "divestment"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    date_divested = Column(DATE, nullable=False, server_default=text("now()"))
     created_at = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
-    date_invested = Column(DATE)
 
+    # From Rquest
     unit_price = Column(Float)
     quantity = Column(Integer)
+    date_divested = Column(DATE, nullable=False, server_default=text("now()"))
 
-    cost_of_investment = Column(Float)
+    # Will be calculated at insert or update
     revenue = Column(Float)
     net_return = Column(Float)
 
+    # From Respective Investment (with query param)
+    date_invested = Column(DATE)
+    cost_of_investment = Column(Float)
+    company = Column(String, nullable=False)
+
     investment_id = Column(Integer, ForeignKey("investment.id"))
     owner_id = Column(Integer, ForeignKey("user.id"))
-    # company = Column(String, ForeignKey("company.name")) # Ticker of corresponding company with .market
+
+# class Transaction(Base):
+#     __tablename__ = "transaction"
+    
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    
+    
+    
+    
+    
+#     owner_id = Column(Integer, ForeignKey("user.id"))
+
 
 
 class Process(Base):
@@ -141,17 +157,14 @@ class Market(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=True)
-    country = Column(String, nullable=True)    
+    country = Column(String, nullable=True)
     currency = Column(String, nullable=True)
     timezone = Column(String, nullable=True)
     mic_code = Column(String, nullable=True)
     yahoo_suffix = Column(String, nullable=True)
 
-
-    
     index_30 = Column(Float, nullable=True)
     index_50 = Column(Float, nullable=True)
     index_100 = Column(Float, nullable=True)
-    
-    #country_id = Column(Integer, ForeignKey("country.id"), nullable=True)
 
+    # country_id = Column(Integer, ForeignKey("country.id"), nullable=True)

@@ -1,7 +1,8 @@
-import Dashboard from "@/app/dashboard/page";
-
-export default function Home() {
+// src/app/page.tsx
+export default function HomePage() {
   return (
-      <Dashboard />
+    <main className="flex min-h-screen items-center justify-center">
+      <h1 className="text-4xl font-bold">Hello, Next.js + Tailwind!</h1>
+    </main>
   );
 }

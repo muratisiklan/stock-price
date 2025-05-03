@@ -53,12 +53,13 @@ app.add_middleware(
 
 
 app.include_router(auth.router)
-app.include_router(investments.router)
-app.include_router(admin.router)
 app.include_router(users.router)
+app.include_router(investments.router)
 app.include_router(divestments.router)
 app.include_router(user_analytics.router)
 app.include_router(company_analytics.router)
+app.include_router(admin.router)
+
 
 
 if __name__ == "__main__":
