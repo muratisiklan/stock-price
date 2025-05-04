@@ -11,6 +11,7 @@ from .routers import (
     investments,
     user_analytics,
     users,
+    divestments_main
 )
 from .scripts.comp_init import init_companies
 from .scripts.country_init import init_countries
@@ -55,6 +56,7 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(investments.router)
+app.include_router(divestments_main.router)
 app.include_router(divestments.router)
 app.include_router(user_analytics.router)
 app.include_router(company_analytics.router)

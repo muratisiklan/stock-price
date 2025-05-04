@@ -28,6 +28,12 @@ class CompanyDetail(BaseModel):
                                                     description="Total revenue gained(realized) by divestments for each company")
     net_return: float = Field(...,
                               description="Total net return in last month by each company")
+    average_cost: float = Field(...,
+                                description="Total net return in last month by each company")
+    average_revenue: float = Field(...,
+                                description="Total net return in last month by each company")
+    average_profit: float = Field(...,
+                                description="Total net return in last month by each company")
 
     # class Config:
     #     json_schema_extra = {
@@ -76,6 +82,12 @@ class AnalyticsResponse(BaseModel):
                                                     description="Total revenue gained(realized) by divestments in the last month")
     net_return: float = Field(...,
                               description="Total net return in last month")
+    average_cost: float = Field(...,
+                                description="Total net return in last month by each company")
+    average_revenue: float = Field(...,
+                                description="Total net return in last month by each company")
+    average_profit: float = Field(...,
+                                description="Total net return in last month by each company")
 
     investments_by_company: List[CompanyDetail] = Field(
         ..., description="Detailed information for each company")
@@ -96,6 +108,9 @@ class AnalyticsResponse(BaseModel):
                 "cost_of_realized_investment": 1200.00,
                 "revenue_from_realized_investment": 1323.00,
                 "net_return": 123.00,
+                "average_cost": 500.00,
+                "average_revenue":600.00,
+                "average_profit":100.00,
 
 
                 "investments_by_company": [
@@ -110,7 +125,10 @@ class AnalyticsResponse(BaseModel):
                         "quantity_divested": 10,
                         "cost_of_realized_investment": 150.00,
                         "revenue_from_realized_investment": 250.00,
-                        "net_return": 100.00
+                        "net_return": 100.00,
+                        "average_cost": 500.00,
+                        "average_revenue":600.00,
+                        "average_profit":100.00,
 
                     },
                     {
@@ -124,7 +142,10 @@ class AnalyticsResponse(BaseModel):
                         "quantity_divested": 10,
                         "cost_of_realized_investment": 150.00,
                         "revenue_from_realized_investment": 250.00,
-                        "net_return": 100.00
+                        "net_return": 100.00,
+                        "average_cost": 500.00,
+                        "average_revenue":600.00,
+                        "average_profit":100.00,
                     },
                     {
                         "company_name": "Company C",
@@ -137,7 +158,10 @@ class AnalyticsResponse(BaseModel):
                         "quantity_divested": 10,
                         "cost_of_realized_investment": 150.00,
                         "revenue_from_realized_investment": 250.00,
-                        "net_return": 100.00
+                        "net_return": 100.00,
+                        "average_cost": 500.00,
+                        "average_revenue":600.00,
+                        "average_profit":100.00,
 
 
                     }

@@ -12,7 +12,7 @@ def read_divestment_by_id_service(db: Session, user: dict, id: int):
     return db.query(Divestment).filter(Divestment.id == id, Divestment.owner_id == user.get("id")).first()
 
 
-def create_divestment_service(db: Session, user: dict, request: DivestmentRequest, inv_id: int):
+def create_divestment_service(db: Session, user: dict, request: DivestmentRequest, inv_id: int, div_main_id: int):
     # Fetch the investment related to the divestment
     investment_model = db.query(Investment).filter(
         Investment.id == inv_id, Investment.owner_id == user.get("id")).first()
@@ -38,7 +38,8 @@ def create_divestment_service(db: Session, user: dict, request: DivestmentReques
         cost_of_investment=request.quantity * investment_model.unit_price,
         net_return=request.quantity *
         (request.unit_price - investment_model.unit_price),
-        date_invested=investment_model.date_invested
+        date_invested=investment_model.date_invested,
+        divestmentmain_id=div_main_id,
     )
 
     # Update user and investment details

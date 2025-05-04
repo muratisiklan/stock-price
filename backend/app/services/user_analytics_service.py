@@ -1,166 +1,135 @@
 from datetime import date
-from typing import Dict
+from typing import List
 
-import requests
 from sqlalchemy import distinct, func
-from sqlalchemy.orm import Session, aliased
+from sqlalchemy.orm import Session
 
-from ..config import settings_api
 from ..models import Divestment, Investment
 from ..schemas.user_analytics_schema import AnalyticsResponse, CompanyDetail
 
 
 def get_user_analytics(db: Session, user: dict, start_date: date) -> AnalyticsResponse:
-    # Query for investments
-    investment_data = (
-        db.query(
-            func.count(Investment.id).label("num_investments"),
-            func.sum(Investment.quantity * Investment.unit_price).label(
-                "total_invested"
-            ),
-            func.count(distinct(Investment.company)).label(
-                "distinct_companies_invested"
-            ),
-            func.sum(Investment.quantity).label("quantity_invested"),
-            func.sum(Investment.quantity_remaining).label(
-                "quantity_nonrealized_investment"
-            ),
-        )
-        .filter(
-            Investment.owner_id == user["id"],
-            Investment.date_invested >= start_date,
-        )
-        .first()
-    )
+    user_id = user["id"]
 
-    # Query for divestments
-    divestment_data = (
-        db.query(
-            func.count(Divestment.id).label("num_divestments"),
-            func.sum(Divestment.quantity * Divestment.unit_price).label(
-                "total_divested"
-            ),
-            func.count(distinct(Divestment.company)).label(
-                "distinct_companies_divested"
-            ),
-            func.sum(Divestment.quantity).label("quantity_divested"),
-            func.sum(Divestment.cost_of_investment).label(
-                "cost_of_realized_investment"
-            ),
-            func.sum(Divestment.revenue).label("revenue_from_realized_investment"),
-            func.sum(Divestment.net_return).label("net_return"),
-        )
-        .filter(
-            Divestment.owner_id == user["id"],
-            Divestment.date_invested >= start_date,
-        )
-        .first()
-    )
+    # Common filters
+    investment_filter = (Investment.owner_id == user_id,
+                         Investment.date_invested >= start_date)
+    divestment_filter = (Divestment.owner_id == user_id,
+                         Divestment.date_invested >= start_date)
 
-    # Subqueries for specific company investment and divestment metrics
-    investment_subquery = (
-        db.query(
-            Investment.company.label("company_name"),
-            func.count(Investment.id).label("num_investments"),
-            func.sum(Investment.quantity * Investment.unit_price).label(
-                "total_invested"
-            ),
-            func.sum(Investment.quantity).label("quantity_invested"),
-            func.sum(Investment.quantity_remaining).label(
-                "quantity_nonrealized_investment"
-            ),
-        )
-        .filter(
-            Investment.owner_id == user["id"],
-            Investment.date_invested >= start_date,
-        )
-        .group_by(Investment.company)
-        .subquery()
-    )
+    # Helper to safely extract attributes
+    def safe(attr, default=0):
+        return attr if attr is not None else default
 
-    divestment_subquery = (
-        db.query(
-            Divestment.company.label("company_name"),
-            func.count(Divestment.id).label("num_divestments"),
-            func.sum(Divestment.quantity * Divestment.unit_price).label(
-                "total_divested"
-            ),
-            func.sum(Divestment.quantity).label("quantity_divested"),
-            func.sum(Divestment.cost_of_investment).label(
-                "cost_of_realized_investment"
-            ),
-            func.sum(Divestment.revenue).label("revenue_from_realized_investment"),
-            func.sum(Divestment.net_return).label("net_return"),
-        )
-        .filter(
-            Divestment.owner_id == user["id"],
-            Divestment.date_invested >= start_date,
-        )
-        .group_by(Divestment.company)
-        .subquery()
-    )
+    # Investment aggregation
+    inv = db.query(
+        func.count(Investment.id),
+        func.sum(Investment.quantity * Investment.unit_price),
+        func.count(distinct(Investment.company)),
+        func.sum(Investment.quantity),
+        func.sum(Investment.quantity_remaining),
+        (func.sum(Investment.quantity * Investment.unit_price) /
+         func.nullif(func.sum(Investment.quantity), 0)),
+    ).filter(*investment_filter).first()
 
-    # Alias the subqueries for clarity
-    investment_alias = aliased(investment_subquery)
-    divestment_alias = aliased(divestment_subquery)
+    # Divestment aggregation
+    div = db.query(
+        func.count(Divestment.id),
+        func.sum(Divestment.revenue),
+        func.count(distinct(Divestment.company)),
+        func.sum(Divestment.quantity),
+        func.sum(Divestment.cost_of_investment),
+        func.sum(Divestment.revenue),
+        func.sum(Divestment.net_return),
+        (func.sum(Divestment.quantity * Divestment.unit_price) /
+         func.nullif(func.sum(Divestment.quantity), 0)),
+    ).filter(*divestment_filter).first()
 
-    # Perform the join on company_name
-    query = (
-        db.query(
-            investment_alias.c.company_name,
-            investment_alias.c.num_investments,
-            investment_alias.c.total_invested,
-            investment_alias.c.quantity_invested,
-            investment_alias.c.quantity_nonrealized_investment,
-            divestment_alias.c.num_divestments,
-            divestment_alias.c.total_divested,
-            divestment_alias.c.quantity_divested,
-            divestment_alias.c.cost_of_realized_investment,
-            divestment_alias.c.revenue_from_realized_investment,
-            divestment_alias.c.net_return,
-        )
-        .join(
-            divestment_alias,
-            investment_alias.c.company_name == divestment_alias.c.company_name,
-            isouter=True,
-        )
-        .all()
-    )
+    # Subqueries for per-company metrics
+    inv_subq = db.query(
+        Investment.company.label("company"),
+        func.count(Investment.id).label("num_investments"),
+        func.sum(Investment.quantity *
+                 Investment.unit_price).label("total_invested"),
+        func.sum(Investment.quantity).label("quantity_invested"),
+        func.sum(Investment.quantity_remaining).label(
+            "quantity_nonrealized_investment"),
+        (func.sum(Investment.quantity * Investment.unit_price) /
+         func.nullif(func.sum(Investment.quantity), 0)).label("average_cost"),
+    ).filter(*investment_filter).group_by(Investment.company).subquery()
 
-    # Populate company details with handling for None values
-    company_details = []
-    for row in query:
-        company_detail = CompanyDetail(
-            company_name=row.company_name,
-            num_investments=row.num_investments or 0,
-            num_divestments=row.num_divestments or 0,
-            total_invested=row.total_invested or 0.0,
-            total_divested=row.total_divested or 0.0,
-            quantity_invested=row.quantity_invested or 0,
-            quantity_nonrealized_investment=row.quantity_nonrealized_investment or 0,
-            quantity_divested=row.quantity_divested or 0,
-            cost_of_realized_investment=row.cost_of_realized_investment or 0,
-            revenue_from_realized_investment=row.revenue_from_realized_investment or 0,
-            net_return=row.net_return or 0.0,
-        )
-        company_details.append(company_detail)
+    div_subq = db.query(
+        Divestment.company.label("company"),
+        func.count(Divestment.id).label("num_divestments"),
+        func.sum(Divestment.quantity *
+                 Divestment.unit_price).label("total_divested"),
+        func.sum(Divestment.quantity).label("quantity_divested"),
+        func.sum(Divestment.cost_of_investment).label(
+            "cost_of_realized_investment"),
+        func.sum(Divestment.revenue).label("revenue_from_realized_investment"),
+        func.sum(Divestment.net_return).label("net_return"),
+        (func.sum(Divestment.quantity * Divestment.unit_price) /
+         func.nullif(func.sum(Divestment.quantity), 0)).label("average_revenue"),
+    ).filter(*divestment_filter).group_by(Divestment.company).subquery()
 
-    # Construct the final AnalyticsResponse object
-    response = AnalyticsResponse(
+    # Join subqueries
+    company_rows = db.query(
+        inv_subq.c.company,
+        inv_subq.c.num_investments,
+        inv_subq.c.total_invested,
+        inv_subq.c.quantity_invested,
+        inv_subq.c.quantity_nonrealized_investment,
+        inv_subq.c.average_cost,
+        div_subq.c.num_divestments,
+        div_subq.c.total_divested,
+        div_subq.c.quantity_divested,
+        div_subq.c.cost_of_realized_investment,
+        div_subq.c.revenue_from_realized_investment,
+        div_subq.c.net_return,
+        div_subq.c.average_revenue,
+    ).outerjoin(div_subq, inv_subq.c.company == div_subq.c.company,full=True).all()
+
+    # Prepare detailed company info
+    company_details: List[CompanyDetail] = []
+    for row in company_rows:
+        avg_profit = (safe(row.average_revenue, 0.0) -
+                      safe(row.average_cost, 0.0))
+        company_details.append(CompanyDetail(
+            company_name=row.company,
+            num_investments=safe(row.num_investments),
+            total_invested=safe(row.total_invested, 0.0),
+            quantity_invested=safe(row.quantity_invested),
+            quantity_nonrealized_investment=safe(
+                row.quantity_nonrealized_investment),
+            average_cost=safe(row.average_cost, 0.0),
+            num_divestments=safe(row.num_divestments),
+            total_divested=safe(row.total_divested, 0.0),
+            quantity_divested=safe(row.quantity_divested),
+            cost_of_realized_investment=safe(row.cost_of_realized_investment),
+            revenue_from_realized_investment=safe(
+                row.revenue_from_realized_investment),
+            net_return=safe(row.net_return, 0.0),
+            average_revenue=safe(row.average_revenue, 0.0),
+            average_profit=avg_profit,
+        ))
+
+    # Final response
+    return AnalyticsResponse(
         from_date=start_date,
-        num_investments=investment_data.num_investments or 0,
-        num_divestments=divestment_data.num_divestments or 0,
-        distinct_companies_invested=investment_data.distinct_companies_invested or 0,
-        distinct_companies_divested=divestment_data.distinct_companies_divested or 0,
-        total_invested=investment_data.total_invested or 0.0,
-        total_divested=divestment_data.total_divested or 0.0,
-        quantity_invested=investment_data.quantity_invested or 0,
-        quantity_nonrealized_investment=investment_data.quantity_nonrealized_investment or 0,
-        quantity_divested=divestment_data.quantity_divested or 0,
-        cost_of_realized_investment=divestment_data.cost_of_realized_investment or 0,
-        revenue_from_realized_investment=divestment_data.revenue_from_realized_investment or 0,
-        net_return=divestment_data.net_return or 0.0,
+        num_investments=safe(inv[0]),
+        total_invested=safe(inv[1], 0.0),
+        distinct_companies_invested=safe(inv[2]),
+        quantity_invested=safe(inv[3]),
+        quantity_nonrealized_investment=safe(inv[4]),
+        average_cost=safe(inv[5], 0.0),
+        num_divestments=safe(div[0]),
+        total_divested=safe(div[1], 0.0),
+        distinct_companies_divested=safe(div[2]),
+        quantity_divested=safe(div[3]),
+        cost_of_realized_investment=safe(div[4]),
+        revenue_from_realized_investment=safe(div[5]),
+        net_return=safe(div[6], 0.0),
+        average_revenue=safe(div[7], 0.0),
+        average_profit=safe(div[7], 0.0) - safe(inv[5], 0.0),
         investments_by_company=company_details,
     )
-
-    return response

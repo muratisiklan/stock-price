@@ -55,6 +55,25 @@ class Investment(Base):
     # company = Column(String, ForeignKey("company.name")) # Ticker of corresponding company with .market
 
 
+class DivestmentMain(Base):
+    __tablename__ = "divestment_main"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    created_at = Column(
+        TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
+    )
+
+    # From Request
+    unit_price = Column(Float)
+    quantity = Column(Integer)
+    date_divested = Column(DATE, nullable=False, server_default=text("now()"))
+    company = Column(String, nullable=False)
+
+    # Will be calculated at insert or update
+    revenue = Column(Float)
+    owner_id = Column(Integer, ForeignKey("user.id"))
+
+
 class Divestment(Base):
     __tablename__ = "divestment"
 
@@ -73,24 +92,13 @@ class Divestment(Base):
     net_return = Column(Float)
 
     # From Respective Investment (with query param)
-    date_invested = Column(DATE)
+    date_invested = Column(DATE)  # TODO: Oldest Investment related with
     cost_of_investment = Column(Float)
     company = Column(String, nullable=False)
 
+    divestmentmain_id = Column(Integer, ForeignKey("divestment_main.id"))
     investment_id = Column(Integer, ForeignKey("investment.id"))
     owner_id = Column(Integer, ForeignKey("user.id"))
-
-# class Transaction(Base):
-#     __tablename__ = "transaction"
-    
-#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    
-    
-    
-    
-    
-#     owner_id = Column(Integer, ForeignKey("user.id"))
-
 
 
 class Process(Base):
