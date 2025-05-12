@@ -67,7 +67,7 @@ def update_existing_investment(db: Session, user: dict, request: InvestmentReque
     db.commit()
     return {"message": "Investment updated successfully"}
 
-
+#TODO: Investment delete logic will be created from scratch
 def delete_existing_investment(db: Session, user: dict, investment_id: int):
 
     investment = db.query(Investment).filter(

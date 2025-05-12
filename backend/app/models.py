@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import DATE, TIMESTAMP
 from sqlalchemy.types import Boolean, Float, Integer, String
+from sqlalchemy import UniqueConstraint, PrimaryKeyConstraint
 
 from .database import Base
 from .enums.user_enum import UserRole
@@ -99,6 +100,28 @@ class Divestment(Base):
     divestmentmain_id = Column(Integer, ForeignKey("divestment_main.id"))
     investment_id = Column(Integer, ForeignKey("investment.id"))
     owner_id = Column(Integer, ForeignKey("user.id"))
+
+
+class Balance(Base):
+    __tablename__ = "balance"
+
+    id = Column(Integer, autoincrement=True, index=True)
+    owner_id = Column(Integer, nullable=False)
+    company = Column(String, nullable=False)
+
+    number_of_investments = Column(Integer, nullable=False, default=0)
+    total_investment = Column(Float, nullable=False, default=0.0)
+    number_of_divestments = Column(Integer, nullable=False, default=0)
+    total_divestment = Column(Float, nullable=False, default=0.0)
+    average_cost = Column(Float, nullable=False, default=0.0)
+    average_revenue = Column(Float, nullable=False, default=0.0)
+    quantity_held = Column(Integer, nullable=False, default=0)
+    net_return = Column(Float, nullable=False, default=0.0)
+
+    __table_args__ = (
+        UniqueConstraint("owner_id", "company", name="uq_owner_company"),
+        PrimaryKeyConstraint("owner_id", "company"),
+    )
 
 
 class Process(Base):

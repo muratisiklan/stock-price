@@ -8,7 +8,7 @@ from ..database import get_db
 from ..models import User, Investment, Divestment
 from ..schemas.divestment_schema import DivestmentRequest
 from .auth import get_current_user
-from ..services.divestment_service import create_divestment_service, update_divestment_service, delete_divestment_service, read_all_divestments_service, read_divestment_by_id_service
+from ..services.divestment_service import create_divestment_service, delete_divestment_service, read_all_divestments_service, read_divestment_by_id_service
 
 router = APIRouter(prefix="/divestment", tags=["divestment"])
 
@@ -50,17 +50,17 @@ async def create_divestment(
     return divestment
 
 
-@router.put("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def update_divestment(
-    user: user_dependency,
-    db: db_dependency,
-    divestment_request: DivestmentRequest,
-    id: int = Path(gt=0),
-):
-    if user is None:
-        raise HTTPException(status_code=401, detail="Authentication Failed!")
+# @router.put("/{id}", status_code=status.HTTP_204_NO_CONTENT)
+# async def update_divestment(
+#     user: user_dependency,
+#     db: db_dependency,
+#     divestment_request: DivestmentRequest,
+#     id: int = Path(gt=0),
+# ):
+#     if user is None:
+#         raise HTTPException(status_code=401, detail="Authentication Failed!")
 
-    update_divestment_service(db, user, divestment_request, id)
+#     update_divestment_service(db, user, divestment_request, id)
 
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
