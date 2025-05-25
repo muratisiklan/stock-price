@@ -26,9 +26,9 @@ class User(Base):
     phone_number = Column(String)
     # ? number of investments and total investment is incremented in Investment post request
     number_of_investments = Column(Integer, nullable=False, default=0)
-    total_investment = Column(Integer, nullable=False, default=0)
+    total_investment = Column(Float, nullable=False, default=0)
     number_of_divestments = Column(Integer, nullable=False, default=0)
-    total_divestment = Column(Integer, nullable=False, default=0)
+    total_divestment = Column(Float, nullable=False, default=0)
 
     is_premium = Column(Boolean, nullable=False, default=False)
 

@@ -68,6 +68,7 @@ def update_existing_investment(db: Session, user: dict, request: InvestmentReque
     return {"message": "Investment updated successfully"}
 
 #TODO: Investment delete logic will be created from scratch
+# what will happen when a investment created which have dependent divestments on it
 def delete_existing_investment(db: Session, user: dict, investment_id: int):
 
     investment = db.query(Investment).filter(
